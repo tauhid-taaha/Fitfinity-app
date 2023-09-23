@@ -31,15 +31,16 @@ namespace fitfinity
                         string[] userData = line.Split(':');
 
                         // Check if userData has enough elements before accessing them
-                        if (userData.Length == 5)
+                        if (userData.Length == 6)
                         {
                             string username = userData[0];
                             string password = userData[1];
                             double weight = double.Parse(userData[2]);
                             double height = double.Parse(userData[3]);
                             string gender = userData[4];
+                            double age = double.Parse(userData[5]);
 
-                            User newUser = new User(username, password, gender, height, weight);
+                            User newUser = new User(username, password, gender, height, weight,age);
                             users.Add(newUser);
                         }
                         else
@@ -67,8 +68,13 @@ namespace fitfinity
             Console.Write("Enter your gender: ");
             string gender = Console.ReadLine();
 
+            Console.Write("Enter your age: ");
+            double age =double.Parse( Console.ReadLine());
+
+
+
             // Create a new user and add them to the list
-            User newUser = new User(username, password, gender, height, weight);
+            User newUser = new User(username, password, gender, height, weight, age);
             users.Add(newUser);
 
             // Save user information to a text file
@@ -108,7 +114,9 @@ namespace fitfinity
             {
                 Console.WriteLine("Choose an option:");
                 Console.WriteLine("1. Calculate BMI");
-                Console.WriteLine("2. Log Out");
+                Console.WriteLine("2. Calculate daily calories");
+
+                Console.WriteLine("3. Log Out");
 
                 string choice = Console.ReadLine();
 
@@ -119,9 +127,45 @@ namespace fitfinity
                         double bmi = CalculateBMI(currentUser.Height, currentUser.Weight);
                         Console.WriteLine($"Your BMI is: {bmi:F2}");
                         break;
-                    case "2":
+
+                        case "2":
+                        Console.Write("Enter your age: ");
+                        int age = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Choose your activity level: ");
+                        Console.WriteLine("1. Inactive");
+                        Console.WriteLine("2. Light");
+                        Console.WriteLine("3. Moderate");
+                        Console.WriteLine("4. Active");
+                        Console.WriteLine("5. Very Active");
+                        string activityChoice = Console.ReadLine();
+                        string activityLevel = "sedentary";
+
+                        switch (activityChoice)
+                        {
+                            case "1":
+                                activityLevel = "Inactive";
+                                break;
+                            case "2":
+                                activityLevel = "light";
+                                break;
+                            case "3":
+                                activityLevel = "moderate";
+                                break;
+                            case "4":
+                                activityLevel = "active";
+                                break;
+                            case "5":
+                                activityLevel = "very active";
+                                break;
+                        }
+                        double calories = Nutrition.CalculateDailyCalories(currentUser.Gender, currentUser.Weight, currentUser.Height, age, activityLevel);
+                        Console.WriteLine($"Your daily calorie needs are: {calories:F2} calories");
+                        break;
+
+
+                    case "3":
                         currentUser = null; // Log out the current user
-                        Console.WriteLine("Logged out. Goodbye!");
+                        Console.WriteLine("Logged out. Goodbye!"); 
                         return;
                     default:
                         Console.WriteLine("Invalid option. Please choose a valid option.");
