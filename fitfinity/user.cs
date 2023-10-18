@@ -14,10 +14,10 @@ namespace fitfinity
         public double Height { get; set; }
 
         public double Weight { get; set; }
-        public double age { get; set; }
+        public int age { get; set; }
         // ... Other user properties like name, age, weight, height, etc.
 
-        public User(string username, string password , string gender, double height, double weight ,double age/*, other properties */)
+        public User(string username, string password , string gender, double height, double weight ,int age/*, other properties */)
         {
             Username = username;
             Password = password;

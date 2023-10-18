@@ -31,6 +31,7 @@ namespace fitfinity
                         string newUser = Console.ReadLine();
                         Console.Write("Enter a password: ");
                         string newPassword = Console.ReadLine();
+                        //new add
 
                         if (userManager.CreateUser(newUser, newPassword))
                         {
@@ -55,7 +56,7 @@ namespace fitfinity
                                     else
                                     {
                                         Console.WriteLine("Login Failed. Try Again.");
-                                        // Loop back to the main menu
+                                        
                                     }
                                     break;
 
@@ -69,7 +70,7 @@ namespace fitfinity
                             }
                         }
                         break;
-     case "2":
+                       case "2":
                                 Console.Write("Enter your username: ");
                                 string username = Console.ReadLine();
                                 Console.Write("Enter your password: ");
