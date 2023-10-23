@@ -24,7 +24,7 @@ namespace fitfinity
             Gender = gender;
             Height = height;
             Weight = weight;
-            age = age;
+            this.age = age;
             // Initialize other properties
         }
     }

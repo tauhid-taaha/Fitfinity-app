@@ -1,0 +1,27 @@
+Apple,0.63
+Banana,0.92
+Beef Curry,1.10
+Chicken Curry,1.04
+Fried Chicken,1.86
+Mutton 	Curry,2.03
+Fried Egg,1.95 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

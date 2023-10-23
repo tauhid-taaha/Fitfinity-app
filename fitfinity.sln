@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fitfinity", "fitfinity\fitfinity.csproj", "{3CC2FCAA-C061-4757-909B-D28672008E31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{D7CCE4D6-67AC-4650-AFB8-41D62E4F1A1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{3CC2FCAA-C061-4757-909B-D28672008E31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CC2FCAA-C061-4757-909B-D28672008E31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CC2FCAA-C061-4757-909B-D28672008E31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7CCE4D6-67AC-4650-AFB8-41D62E4F1A1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7CCE4D6-67AC-4650-AFB8-41D62E4F1A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7CCE4D6-67AC-4650-AFB8-41D62E4F1A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7CCE4D6-67AC-4650-AFB8-41D62E4F1A1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

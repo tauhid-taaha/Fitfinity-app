@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,8 +10,12 @@ namespace fitfinity
     internal class Program
     {
         static void Main(string[] args)
+
         {
-            UserManager userManager = new UserManager();
+           
+
+
+                    UserManager userManager = new UserManager();
             
             Console.WriteLine("Welcome to Calorie Intake Calculator!");
             Console.WriteLine("=====================================");
@@ -90,7 +95,7 @@ namespace fitfinity
                             }
                         }
 
-                Console.WriteLine();
+                //Console.WriteLine(" ");
             }
         }
     }
