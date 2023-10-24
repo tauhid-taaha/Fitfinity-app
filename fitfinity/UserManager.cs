@@ -40,7 +40,7 @@ namespace fitfinity
                             string gender = userData[4];
                             int age = int.Parse(userData[5]);
 
-                            User newUser = new User(username, password, gender, height, weight,age);
+                            User newUser = new User(username, password, gender, height, weight, age);
                             users.Add(newUser);
                         }
                         else
@@ -234,82 +234,97 @@ namespace fitfinity
                         break;
 
                     case "5":
-                        Console.WriteLine("1.Breakfast");
-                        Console.WriteLine("2.Lunch");
-                        Console.WriteLine("3.Snacks");
-                        Console.WriteLine("4.Dinner");
-                        Console.WriteLine("5.Others");
-                        
-                       string foodtype= Console.ReadLine();
-                        foodload fd= new foodload();
-                        List<int> selectedFoodIndices = new List<int>();
-                        List<int> grams = new List<int>();
 
-                        switch (foodtype)
+                        Dictionary<string, List<int>> mealData = new Dictionary<string, List<int>>();
+                        foodload fd = new foodload();
+
+                        while (true)
                         {
-                            case "1":
-                                Console.WriteLine("Available Food Options:");
-                                fd.PrintAllFoodNames();
+                            Console.WriteLine("Select a meal to input food details:");
+                            Console.WriteLine("1. Breakfast");
+                            Console.WriteLine("2. Lunch");
+                            Console.WriteLine("3. Snacks");
+                            Console.WriteLine("4. Dinner");
+                            Console.WriteLine("5. Calculate Overall Daily Calories");
+                            Console.WriteLine("6. Exit");
 
+                            string mealType = Console.ReadLine();
 
+                            switch (mealType)
+                            {
+                                case "1": // Breakfast
+                                case "2": // Lunch
+                                case "3": // Snacks
+                                case "4": // Dinner
+                                    List<int> selectedFoodIndices = new List<int>();
+                                    List<int> grams = new List<int>();
 
-                                while (true)
-                                {
-                                    Console.Write("Enter the number of a food item to select (0 to calculate calories or -1 to exit): ");
-                                    if (int.TryParse(Console.ReadLine(), out int selected))
+                                    Console.WriteLine($"Available Food Options for {mealType}:");
+                                    fd.PrintAllFoodNames();
+
+                                    while (true)
                                     {
-                                        if (selected == 0)
+                                        Console.Write("Enter the number of a food item to select (0 to calculate calories or -1 to exit): ");
+                                        if (int.TryParse(Console.ReadLine(), out int selected))
                                         {
-                                            // Calculate total calories and break the loop
-                                            double totalCalories = fd.CalculateTotalCalories(selectedFoodIndices, grams);
-                                            Console.WriteLine($"Total Calories of Selected Foods: {totalCalories}");
-                                            break;
-                                        }
-                                        else if (selected == -1)
-                                        {
-                                            // Exit the loop
-                                            break;
-                                        }
-                                        else if (selected > 0 && selected <= fd.foodsList.Count)
-                                        {
-                                            // Add the selected food index to the list
-                                            selectedFoodIndices.Add(selected - 1);
-                                            Console.Write("Enter the number of grams of this food item: ");
-                                            if (int.TryParse(Console.ReadLine(), out int gram))
+                                            if (selected == 0)
                                             {
-                                                grams.Add(gram);
+                                                // Calculate total calories for the meal and store in the mealData dictionary
+                                                double totalCalories = fd.CalculateTotalCalories(selectedFoodIndices, grams);
+                                                mealData[mealType] = mealData.ContainsKey(mealType)
+                                                    ? mealData[mealType].Concat(new[] { (int)totalCalories }).ToList()
+                                                    : new List<int> { (int)totalCalories };
+                                                Console.WriteLine($"Total Calories for {mealType}: {totalCalories}");
+                                                break;
+                                            }
+                                            else if (selected == -1)
+                                            {
+                                                // Exit the loop
+                                                break;
+                                            }
+                                            else if (selected > 0 && selected <= fd.foodsList.Count)
+                                            {
+                                                selectedFoodIndices.Add(selected - 1);
+                                                Console.Write("Enter the number of grams of this food item: ");
+                                                if (int.TryParse(Console.ReadLine(), out int gram))
+                                                {
+                                                    grams.Add(gram);
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("Invalid input for grams. Please try again.");
+                                                }
                                             }
                                             else
                                             {
-                                                Console.WriteLine("Invalid input for grams. Please try again.");
+                                                Console.WriteLine("Invalid selection. Please try again.");
                                             }
                                         }
                                         else
                                         {
-                                            Console.WriteLine("Invalid selection. Please try again.");
+                                            Console.WriteLine("Invalid input. Please enter a valid number.");
                                         }
                                     }
-                                    else
-                                    {
-                                        Console.WriteLine("Invalid input. Please enter a valid number.");
-                                    }
-                                }
-
                                     break;
-                                case "2": Console.WriteLine("Rice Curry Biriyani");
-                                break;
-                                 case "3": Console.WriteLine("Greentea Milk ");
-                                break;
-                                case "4": Console.WriteLine("Salad CornFlakes");
-                                break;
 
-                               case "5": Console.WriteLine("no food available");
-                                break;
-                                default: Console.WriteLine("enter valid option");
-                                break;
+                                case "5": // Calculate Overall Daily Calories
+                                    double overallCalories = mealData.Values.SelectMany(list => list).Sum();
+                                    Console.WriteLine($"Overall Daily Calories: {overallCalories}");
+                                    break;
+
+                                case "6": // Exit the program
+                                    ShowMenu();
+                                    return ;
+
+                                default:
+                                    Console.WriteLine("Enter a valid option.");
+                                    break;
+                            }
                         }
 
-                        break;
+                
+
+                            
                     case "6":
                         Console.WriteLine("Choose your goal:");
                         Console.WriteLine("1. Weight Loss");

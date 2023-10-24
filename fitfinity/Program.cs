@@ -40,6 +40,7 @@ namespace fitfinity
 
                         if (userManager.CreateUser(newUser, newPassword))
                         {
+
                             Console.WriteLine("Choose an option:");
                             Console.WriteLine("1. Log In");
                             Console.WriteLine("2. Exit");
