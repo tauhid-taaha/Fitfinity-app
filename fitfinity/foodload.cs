@@ -9,8 +9,9 @@ namespace fitfinity
 {
     public class foodload
     {
-        string filePath =@"C:\\\\Users\\\\Tauhid\\\\source\\\\repos\\\\Fitfinity-app\\\\New folder (2)\\\\fitfinity\\\\calories.txt";
+        string filePath = @"C:\Users\acer\Downloads\New folder\calories.txt";
         public List<Foods> foodsList = new List<Foods>();
+        
 
         public foodload()
         {
