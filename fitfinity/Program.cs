@@ -12,11 +12,11 @@ namespace fitfinity
         static void Main(string[] args)
 
         {
-           
 
 
-                    UserManager userManager = new UserManager();
-            
+
+            UserManager userManager = new UserManager();
+
             Console.WriteLine("Welcome to Calorie Intake Calculator!");
             Console.WriteLine("=====================================");
 
@@ -40,6 +40,7 @@ namespace fitfinity
 
                         if (userManager.CreateUser(newUser, newPassword))
                         {
+
                             Console.WriteLine("Choose an option:");
                             Console.WriteLine("1. Log In");
                             Console.WriteLine("2. Exit");
@@ -61,7 +62,7 @@ namespace fitfinity
                                     else
                                     {
                                         Console.WriteLine("Login Failed. Try Again.");
-                                        
+
                                     }
                                     break;
 
@@ -75,29 +76,29 @@ namespace fitfinity
                             }
                         }
                         break;
-                       case "2":
-                                Console.Write("Enter your username: ");
-                                string username = Console.ReadLine();
-                                Console.Write("Enter your password: ");
-                                string password = Console.ReadLine();
-                                if (userManager.AuthenticateUser(username, password))
-                                {
-                                    Console.WriteLine("Login Succesful");
-                                    userManager.ShowMenu(); // Show menu options after successful login
-                                }
-                                break;
-                            case "3":
-                                Console.WriteLine("Goodbye!");
-                                return;
-                            default:
-                                Console.WriteLine("Invalid option. Please choose a valid option.");
-                                break;
-                            }
+                    case "2":
+                        Console.Write("Enter your username: ");
+                        string username = Console.ReadLine();
+                        Console.Write("Enter your password: ");
+                        string password = Console.ReadLine();
+                        if (userManager.AuthenticateUser(username, password) || userManager.AuthenticateUser(username, password))
+                        {
+                            Console.WriteLine("Login Succesful");
+                            userManager.ShowMenu(); // Show menu options after successful login
                         }
-
-                //Console.WriteLine(" ");
+                        break;
+                    case "3":
+                        Console.WriteLine("Goodbye!");
+                        return;
+                    default:
+                        Console.WriteLine("Invalid option. Please choose a valid option.");
+                        break;
+                }
             }
+
+            //Console.WriteLine(" ");
         }
     }
-    
+}
+
 
