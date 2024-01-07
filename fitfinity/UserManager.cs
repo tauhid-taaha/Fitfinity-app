@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace fitfinity
 {
@@ -16,7 +14,6 @@ namespace fitfinity
         {
             users = new List<User>();
             LoadUsersFromFile();
-
         }
 
         private void LoadUsersFromFile()
@@ -51,6 +48,7 @@ namespace fitfinity
                 }
             }
         }
+
         public bool CreateUser(string username, string password)
         {
             // Check if the user already exists
@@ -59,12 +57,12 @@ namespace fitfinity
                 Console.WriteLine("Username already exists. Please choose a different one.");
                 return false;
             }
+
             Console.Write("Enter your height (cm): ");
             double height = double.Parse(Console.ReadLine());
 
             Console.Write("Enter your weight (kg): ");
             double weight = double.Parse(Console.ReadLine());
-            //newadd
 
             Console.WriteLine("Select your gender:");
             Console.WriteLine("1. Male");
@@ -91,15 +89,11 @@ namespace fitfinity
                     return false;
             }
 
-
-
             Console.Write("Enter your age: ");
-            int age =int.Parse( Console.ReadLine());
-
-
+            int age = int.Parse(Console.ReadLine());
 
             // Create a new user and add them to the list
-            User newUser = new User( username,password,gender,height,weight,age);
+            User newUser = new User(username, password, gender, height, weight, age);
             users.Add(newUser);
 
             // Save user information to a text file
@@ -113,10 +107,17 @@ namespace fitfinity
         {
             User user = users.Find(u => u.Username == username);
 
-            if (user != null && user.Password == password)
+            if ((user != null && (user.Password == password)))
             {
                 currentUser = user; // Set the current user;
                 Console.WriteLine("Login successful. Welcome, " + user.Username + "!");
+
+                /// Record "previous BMI" for the first BMI count
+                if (string.IsNullOrEmpty(user.BMIRecordFilePath))
+                {
+
+                }
+
                 return true;
             }
 
@@ -128,13 +129,11 @@ namespace fitfinity
         {
             using (StreamWriter writer = File.AppendText("users.txt"))
             {
-                writer.WriteLine($"{user.Username}:{user.Password}:{user.Weight}:{user.Height}:{user.Gender}");
+                writer.WriteLine($"{user.Username}:{user.Password}:{user.Weight}:{user.Height}:{user.Gender}:{user.age}");
             }
         }
-        List<Foods> foodsList = new List<Foods>();
 
         public void ShowMenu()
-
         {
             while (true)
             {
@@ -145,63 +144,141 @@ namespace fitfinity
                 Console.WriteLine("3. Calculate steps per mile and determine Activity Level");
                 Console.WriteLine("4. Calculate daily calories");
                 Console.WriteLine("5. Calculate Daily Calorie Intake");
-                Console.WriteLine("6.Set Goals");
+                Console.WriteLine("6. Set Goals");
+                Console.WriteLine("7. See Details");
 
-                Console.WriteLine("7. Log Out");
-                
                 string choice = Console.ReadLine();
+                record rc = new record();
 
                 switch (choice)
                 {
-                    case "1": //
-                        // Implement BMI calculation logic here
-                        double bmi = CalculateBMI(currentUser.Height, currentUser.Weight);
-                        Console.WriteLine($"Your BMI is: {bmi:F2}");
-                        string classification = ClassifyBMI(bmi);
-                        Console.WriteLine($"BMI Classification: {classification}");
-                        
+                    case "1":
+                        Console.WriteLine("Choose an option:");
+                        Console.WriteLine("1. Current BMI");
+                        Console.WriteLine("2. Calculate BMI with new weight");
 
-                       string ClassifyBMI(double bm)
+                        string bmiOption = Console.ReadLine();
+
+                        switch (bmiOption)
                         {
-                            if (bmi < 16)
+                            case "1":
+                                double currentBMI = CalculateBMI(currentUser.Height, currentUser.Weight);
+                                Console.WriteLine($"Your current BMI is: {currentBMI:F2}");
+                                RecordBMI("Previous BMI", currentBMI);
+                                break;
+
+                            case "2":
+                                Console.Write("Enter the date (e.g., MM/DD/YYYY): ");
+                                string date = Console.ReadLine();
+                                Console.Write("Enter your new weight (kg): ");
+                                double newWeight = double.Parse(Console.ReadLine());
+                                double newBMI = CalculateBMI(currentUser.Height, newWeight);
+                                UpdateWeight(date, newWeight, newBMI);
+                                break;
+
+                            default:
+                                Console.WriteLine("Invalid option. Please choose a valid option.");
+                                break;
+                        }
+                        break;
+
+                    case "2":
+                        Console.WriteLine("Calculating BMR...");
+                        double bmr = Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age);
+                        Console.WriteLine($"Your Basal Metabolic Rate (BMR) is: {bmr:F2} calories");
+                        break;
+
+                    case "5":
+
+                        Dictionary<string, List<int>> mealData = new Dictionary<string, List<int>>();
+                        foodload fd = new foodload();
+
+                        while (true)
+                        {
+                            Console.WriteLine("Select a meal to input food details:");
+                            Console.WriteLine("1. Breakfast");
+                            Console.WriteLine("2. Lunch");
+                            Console.WriteLine("3. Snacks");
+                            Console.WriteLine("4. Dinner");
+                            Console.WriteLine("5. Calculate Overall Daily Calories");
+                            Console.WriteLine("6. Exit");
+
+                            string mealType = Console.ReadLine();
+
+                            switch (mealType)
                             {
-                                return "Severe Thinness";
-                            }
-                            else if (bmi >= 16 && bmi < 17)
-                            {
-                                return "Moderate Thinness";
-                            }
-                            else if (bmi >= 17 && bmi < 18.5)
-                            {
-                                return "Mild Thinness";
-                            }
-                            else if (bmi >= 18.5 && bmi < 25)
-                            {
-                                return "Normal";
-                            }
-                            else if (bmi >= 25 && bmi < 30)
-                            {
-                                return "Overweight";
-                            }
-                            else if (bmi >= 30 && bmi < 35)
-                            {
-                                return "Obese Class I";
-                            }
-                            else if (bmi >= 35 && bmi < 40)
-                            {
-                                return "Obese Class II";
-                            }
-                            else
-                            {
-                                return "Obese Class III";
+                                case "1": // Breakfast
+                                case "2": // Lunch
+                                case "3": // Snacks
+                                case "4": // Dinner
+                                    List<int> selectedFoodIndices = new List<int>();
+                                    List<int> grams = new List<int>();
+
+                                    Console.WriteLine($"Available Food Options for {mealType}:");
+                                    fd.PrintAllFoodNames();
+
+                                    while (true)
+                                    {
+                                        Console.Write("Enter the number of a food item to select (0 to calculate calories or -1 to exit): ");
+                                        if (int.TryParse(Console.ReadLine(), out int selected))
+                                        {
+                                            if (selected == 0)
+                                            {
+                                                // Calculate total calories for the meal and store in the mealData dictionary
+                                                double totalCalories = fd.CalculateTotalCalories(selectedFoodIndices, grams);
+                                                mealData[mealType] = mealData.ContainsKey(mealType)
+                                                    ? mealData[mealType].Concat(new[] { (int)totalCalories }).ToList()
+                                                    : new List<int> { (int)totalCalories };
+                                                Console.WriteLine($"Total Calories for {mealType}: {totalCalories}");
+                                                break;
+                                            }
+                                            else if (selected == -1)
+                                            {
+                                                // Exit the loop
+                                                break;
+                                            }
+                                            else if (selected > 0 && selected <= fd.foodsList.Count)
+                                            {
+                                                selectedFoodIndices.Add(selected - 1);
+                                                Console.Write("Enter the number of grams of this food item: ");
+                                                if (int.TryParse(Console.ReadLine(), out int gram))
+                                                {
+                                                    grams.Add(gram);
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("Invalid input for grams. Please try again.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("Invalid selection. Please try again.");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Invalid input. Please enter a valid number.");
+                                        }
+                                    }
+                                    break;
+
+                                case "5": // Calculate Overall Daily Calories
+                                    double overallCalories = mealData.Values.SelectMany(list => list).Sum();
+                                    Console.WriteLine($"Overall Daily Calories: {overallCalories}");
+                                    break;
+
+                                case "6": // Exit the program
+                                    ShowMenu();
+                                    return;
+
+                                default:
+                                    Console.WriteLine("Enter a valid option.");
+                                    break;
                             }
                         }
 
-                        break;
-                        //newadd
+                    case "4":
 
-                        case "4":
-                        
                         Console.WriteLine("Choose your activity level: ");
                         Console.WriteLine("1. Inactive");
                         Console.WriteLine("2. Light");
@@ -232,6 +309,8 @@ namespace fitfinity
                         double calories = Nutrition.CalculateDailyCalories(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age, activityLevel);
                         Console.WriteLine($"Your daily calorie needs are: {calories:F2} calories");
                         break;
+
+ istiaq
 
                     case "5":
 
@@ -325,6 +404,7 @@ namespace fitfinity
                 
 
                             
+ master
                     case "6":
                         Console.WriteLine("Choose your goal:");
                         Console.WriteLine("1. Weight Loss");
@@ -337,9 +417,9 @@ namespace fitfinity
                         {
                             switch (selectedGoal)
                             {
-                                case 1: 
+                                case 1:
                                     Console.WriteLine("Workout Suggestions for Weight Loss:");
-                                    
+
                                     Console.WriteLine("1. Cardio workouts (e.g., running, cycling)");
                                     Console.WriteLine("2. Strength training (e.g., weight lifting)");
                                     break;
@@ -348,9 +428,9 @@ namespace fitfinity
                                     Console.WriteLine("1. Strength training (e.g., weight lifting)");
                                     Console.WriteLine("2. High-calorie diet");
                                     break;
-                                case 3: 
+                                case 3:
                                     Console.WriteLine("Workout Suggestions for Maintaining Health:");
-                                   
+
                                     Console.WriteLine("1. Balanced diet");
                                     Console.WriteLine("2. Regular exercise (e.g., 30 minutes of cardio daily)");
                                     break;
@@ -367,11 +447,13 @@ namespace fitfinity
 
 
 
-
-
                     case "7":
-                        currentUser = null; 
-                        Console.WriteLine("Logged out. Goodbye!"); 
+                        rc.PrintAllRecords();
+                        return;
+
+                    case "8":
+                        currentUser = null;
+                        Console.WriteLine("Logged out. Goodbye!");
                         return;
                     case "3":
                         Console.Write("Enter your gender (Male/Female): ");
@@ -414,12 +496,6 @@ namespace fitfinity
                         }
                         break;
 
-                    case "2":
-                        Console.WriteLine("Calculating BMR...");
-                        double bmr = Nutrition.CalculateBmr (currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age);
-                        Console.WriteLine($"Your Basal Metabolic Rate (BMR) is: {bmr:F2} calories");
-                        break;
-
                     default:
                         Console.WriteLine("Invalid option. Please choose a valid option.");
                         break;
@@ -427,11 +503,8 @@ namespace fitfinity
 
                 Console.WriteLine();
             }
+        }
 
-
-            
-          
-    }
         double CalculateBMI(double height, double weight)
         {
             // Calculate BMI using the formula: BMI = weight (kg) / (height (m) * height (m))
@@ -440,6 +513,44 @@ namespace fitfinity
             Console.WriteLine($"Debug: Height (cm): {height}, Height (m): {heightInMeters}, Weight (kg): {weight}, BMI: {bmi}");
             return bmi;
         }
+
+        void UpdateWeight(string date, double newWeight, double newBMI)
+        {
+            // Find the user in the list
+            User userToUpdate = users.Find(u => u.Username == currentUser.Username);
+
+            if (userToUpdate != null)
+            {
+                // Update the user's weight and save the changes to the file
+                userToUpdate.Weight = newWeight;
+                SaveUsersToFile();
+
+                // Record the date and new BMI in an auto-generated text file
+                RecordBMI(date, newBMI);
+
+                Console.WriteLine($"Weight updated successfully on {date}. New weight: {newWeight} kg");
+            }
+            else
+            {
+                Console.WriteLine("User not found. Weight update failed.");
+            }
+        }
+
+        private void SaveUsersToFile()
+        {
+            // Save all users to the file
+            File.WriteAllLines("users.txt", users.Select(u => $"{u.Username}:{u.Password}:{u.Weight}:{u.Height}:{u.Gender}:{u.age}"));
+        }
+
+        private void RecordBMI(string date, double newBMI)
+        {
+            string filePath = @"C:\Users\acer\Downloads\New folder\record.txt";
+
+            // Record the date and new BMI in a file
+            using (StreamWriter writer = File.AppendText(filePath))
+            {
+                writer.WriteLine($"{date},{newBMI:F2}");
+            }
+        }
     }
 }
-
