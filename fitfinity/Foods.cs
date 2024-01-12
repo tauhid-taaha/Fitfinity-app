@@ -10,5 +10,7 @@ namespace fitfinity
     {
         public string Name { get; set; }
         public double Calorie { get; set; }
+        public string MealType { get; set; }
     }
+   
 }

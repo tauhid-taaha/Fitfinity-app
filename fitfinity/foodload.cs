@@ -9,14 +9,14 @@ namespace fitfinity
 {
     public class foodload
     {
-        string filePath = @"C:\Users\acer\Downloads\New folder\calories.txt";
+        string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\calories.txt";
         public List<Foods> foodsList = new List<Foods>();
-        
 
         public foodload()
         {
             LoadDataFromFile();
         }
+
         public void LoadDataFromFile()
         {
             using (StreamReader reader = new StreamReader(filePath))
@@ -24,48 +24,74 @@ namespace fitfinity
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    // Split the line into food name and calorie using a comma
                     string[] parts = line.Split(',');
-                    if (parts.Length == 2)
+                    if (parts.Length == 3)
                     {
-                        // Parse and store the data in the Foods class
                         Foods food = new Foods
                         {
                             Name = parts[0],
-                            Calorie = double.Parse(parts[1])
+                            Calorie = double.Parse(parts[1]),
+                            MealType = parts[2].Trim().ToLower() // Assuming meal type is stored as "breakfast", "lunch", "snacks", or "dinner"
                         };
 
-                        // Add the Foods instance to the list
                         foodsList.Add(food);
                     }
                 }
             }
-        }
-
-        public void PrintAllFoodNames()
-        {
+            Console.WriteLine("Loaded Food Items:");
             foreach (var food in foodsList)
             {
-                Console.WriteLine($"Food Name: {food.Name}");
+                Console.WriteLine($"Name: {food.Name}, Calorie: {food.Calorie}, MealType: {food.MealType}");
             }
-
         }
-        public double CalculateTotalCalories(List<int> selectedIndices, List<int> grams)
+
+        public void PrintFoodNames(string mealType)
+        {
+            Console.WriteLine($"MealType to search: {mealType}");
+            List<Foods> selectedList = foodsList.Where(food => food.MealType == mealType.ToLower()).ToList();
+
+            for (int i = 0; i < selectedList.Count; i++)
+            {
+                Console.WriteLine($"Index: {i + 1}, Food Name: {selectedList[i].Name}");
+            }
+        }
+
+        public bool IsValidFoodIndex(string mealType, int index)
+        {
+            List<Foods> selectedList = foodsList.Where(food => food.MealType == mealType.ToLower()).ToList();
+            return index > 0 && index <= selectedList.Count;
+        }
+
+        public  double GetCalorie(string mealType, int index)
+        {
+            List<Foods> selectedList = foodsList.Where(food => food.MealType == mealType.ToLower()).ToList();
+            return index >= 0 && index < selectedList.Count ? selectedList[index].Calorie : 0;
+        }
+
+        public  string GetFoodName(string mealType, int index)
+        {
+            List<Foods> selectedList = foodsList.Where(food => food.MealType == mealType.ToLower()).ToList();
+            return index >= 0 && index < selectedList.Count ? selectedList[index].Name : "";
+        }
+
+        public double CalculateTotalCalories(string mealType, List<int> selectedIndices, List<int> grams)
         {
             double totalCalories = 0;
+            List<Foods> selectedList = foodsList.Where(food => food.MealType == mealType.ToLower()).ToList();
+
             for (int i = 0; i < selectedIndices.Count; i++)
             {
                 int index = selectedIndices[i];
-                if (index >= 0 && index < foodsList.Count)
+                if (index >= 0 && index < selectedList.Count)
                 {
-                    double caloriePerGram = foodsList[index].Calorie;
+                    double caloriePerGram = selectedList[index].Calorie;
                     int gram = grams[i];
                     totalCalories += caloriePerGram * gram;
                 }
             }
             return totalCalories;
         }
-    }
 
+    }
 }
 

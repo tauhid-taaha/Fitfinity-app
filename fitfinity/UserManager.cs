@@ -9,6 +9,7 @@ namespace fitfinity
     {
         private List<User> users;
         private User currentUser;
+        
 
         public UserManager()
         {
@@ -112,10 +113,10 @@ namespace fitfinity
                 currentUser = user; // Set the current user;
                 Console.WriteLine("Login successful. Welcome, " + user.Username + "!");
 
-                /// Record "previous BMI" for the first BMI count
+               /// Record "previous BMI" for the first BMI count
                 if (string.IsNullOrEmpty(user.BMIRecordFilePath))
                 {
-
+                    
                 }
 
                 return true;
@@ -134,7 +135,11 @@ namespace fitfinity
         }
 
         public void ShowMenu()
+
         {
+
+            double bmi_for = 0;
+            double bmr_for = 0;
             while (true)
             {
                 Console.WriteLine("Choose an option:");
@@ -149,6 +154,7 @@ namespace fitfinity
 
                 string choice = Console.ReadLine();
                 record rc = new record();
+                
 
                 switch (choice)
                 {
@@ -164,6 +170,7 @@ namespace fitfinity
                             case "1":
                                 double currentBMI = CalculateBMI(currentUser.Height, currentUser.Weight);
                                 Console.WriteLine($"Your current BMI is: {currentBMI:F2}");
+                                bmi_for = currentBMI;
                                 RecordBMI("Previous BMI", currentBMI);
                                 break;
 
@@ -185,8 +192,11 @@ namespace fitfinity
                     case "2":
                         Console.WriteLine("Calculating BMR...");
                         double bmr = Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age);
+                        bmr_for = bmr;
                         Console.WriteLine($"Your Basal Metabolic Rate (BMR) is: {bmr:F2} calories");
                         break;
+
+
 
                     case "5":
 
@@ -207,15 +217,32 @@ namespace fitfinity
 
                             switch (mealType)
                             {
-                                case "1": // Breakfast
-                                case "2": // Lunch
-                                case "3": // Snacks
-                                case "4": // Dinner
+                                case "1":
+                                    mealType = "breakfast";
+                                    break;
+                                case "2":
+                                    mealType = "lunch";
+                                    break;
+                                case "3":
+                                    mealType = "snacks";
+                                    break;
+                                case "4":
+                                    mealType = "dinner";
+                                    break;
+                                    // ... (unchanged code)
+                            }
+
+                            switch (mealType.ToLower())
+                            {
+                                case "breakfast": // Breakfast
+                                case "lunch": // Lunch
+                                case "snacks": // Snacks
+                                case "dinner": // Dinner
                                     List<int> selectedFoodIndices = new List<int>();
                                     List<int> grams = new List<int>();
 
                                     Console.WriteLine($"Available Food Options for {mealType}:");
-                                    fd.PrintAllFoodNames();
+                                    fd.PrintFoodNames(mealType);
 
                                     while (true)
                                     {
@@ -225,7 +252,7 @@ namespace fitfinity
                                             if (selected == 0)
                                             {
                                                 // Calculate total calories for the meal and store in the mealData dictionary
-                                                double totalCalories = fd.CalculateTotalCalories(selectedFoodIndices, grams);
+                                                double totalCalories = fd.CalculateTotalCalories(mealType,selectedFoodIndices, grams);
                                                 mealData[mealType] = mealData.ContainsKey(mealType)
                                                     ? mealData[mealType].Concat(new[] { (int)totalCalories }).ToList()
                                                     : new List<int> { (int)totalCalories };
@@ -237,7 +264,7 @@ namespace fitfinity
                                                 // Exit the loop
                                                 break;
                                             }
-                                            else if (selected > 0 && selected <= fd.foodsList.Count)
+                                            else if (fd.IsValidFoodIndex(mealType, selected))
                                             {
                                                 selectedFoodIndices.Add(selected - 1);
                                                 Console.Write("Enter the number of grams of this food item: ");
@@ -269,7 +296,7 @@ namespace fitfinity
 
                                 case "6": // Exit the program
                                     ShowMenu();
-                                    return;
+                                    return ;
 
                                 default:
                                     Console.WriteLine("Enter a valid option.");
@@ -310,102 +337,19 @@ namespace fitfinity
                         Console.WriteLine($"Your daily calorie needs are: {calories:F2} calories");
                         break;
 
- istiaq
 
-                    case "5":
-
-                        Dictionary<string, List<int>> mealData = new Dictionary<string, List<int>>();
-                        foodload fd = new foodload();
-
-                        while (true)
-                        {
-                            Console.WriteLine("Select a meal to input food details:");
-                            Console.WriteLine("1. Breakfast");
-                            Console.WriteLine("2. Lunch");
-                            Console.WriteLine("3. Snacks");
-                            Console.WriteLine("4. Dinner");
-                            Console.WriteLine("5. Calculate Overall Daily Calories");
-                            Console.WriteLine("6. Exit");
-
-                            string mealType = Console.ReadLine();
-
-                            switch (mealType)
-                            {
-                                case "1": // Breakfast
-                                case "2": // Lunch
-                                case "3": // Snacks
-                                case "4": // Dinner
-                                    List<int> selectedFoodIndices = new List<int>();
-                                    List<int> grams = new List<int>();
-
-                                    Console.WriteLine($"Available Food Options for {mealType}:");
-                                    fd.PrintAllFoodNames();
-
-                                    while (true)
-                                    {
-                                        Console.Write("Enter the number of a food item to select (0 to calculate calories or -1 to exit): ");
-                                        if (int.TryParse(Console.ReadLine(), out int selected))
-                                        {
-                                            if (selected == 0)
-                                            {
-                                                // Calculate total calories for the meal and store in the mealData dictionary
-                                                double totalCalories = fd.CalculateTotalCalories(selectedFoodIndices, grams);
-                                                mealData[mealType] = mealData.ContainsKey(mealType)
-                                                    ? mealData[mealType].Concat(new[] { (int)totalCalories }).ToList()
-                                                    : new List<int> { (int)totalCalories };
-                                                Console.WriteLine($"Total Calories for {mealType}: {totalCalories}");
-                                                break;
-                                            }
-                                            else if (selected == -1)
-                                            {
-                                                // Exit the loop
-                                                break;
-                                            }
-                                            else if (selected > 0 && selected <= fd.foodsList.Count)
-                                            {
-                                                selectedFoodIndices.Add(selected - 1);
-                                                Console.Write("Enter the number of grams of this food item: ");
-                                                if (int.TryParse(Console.ReadLine(), out int gram))
-                                                {
-                                                    grams.Add(gram);
-                                                }
-                                                else
-                                                {
-                                                    Console.WriteLine("Invalid input for grams. Please try again.");
-                                                }
-                                            }
-                                            else
-                                            {
-                                                Console.WriteLine("Invalid selection. Please try again.");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("Invalid input. Please enter a valid number.");
-                                        }
-                                    }
-                                    break;
-
-                                case "5": // Calculate Overall Daily Calories
-                                    double overallCalories = mealData.Values.SelectMany(list => list).Sum();
-                                    Console.WriteLine($"Overall Daily Calories: {overallCalories}");
-                                    break;
-
-                                case "6": // Exit the program
-                                    ShowMenu();
-                                    return ;
-
-                                default:
-                                    Console.WriteLine("Enter a valid option.");
-                                    break;
-                            }
-                        }
-
-                
-
-                            
- master
                     case "6":
+                        Console.WriteLine("Choose your activity level: ");
+                        Console.WriteLine("1. Inactive");
+                        Console.WriteLine("2. Light");
+                        Console.WriteLine("3. Moderate");
+                        Console.WriteLine("4. Active");
+                        Console.WriteLine("5. Very Active");
+                        string activityChoice2 = Console.ReadLine();
+
+                        fitness_recommendation fr= new fitness_recommendation();
+
+
                         Console.WriteLine("Choose your goal:");
                         Console.WriteLine("1. Weight Loss");
                         Console.WriteLine("2. Underweight");
@@ -415,29 +359,12 @@ namespace fitfinity
 
                         if (int.TryParse(goalChoice, out int selectedGoal))
                         {
-                            switch (selectedGoal)
-                            {
-                                case 1:
-                                    Console.WriteLine("Workout Suggestions for Weight Loss:");
+                            string workoutSuggestion = fr.GenerateWorkoutSuggestion(activityChoice2, goalChoice, bmi_for);
+                            string dietSuggestion = fr.GenerateDietSuggestion(goalChoice, bmr_for);
 
-                                    Console.WriteLine("1. Cardio workouts (e.g., running, cycling)");
-                                    Console.WriteLine("2. Strength training (e.g., weight lifting)");
-                                    break;
-                                case 2:
-                                    Console.WriteLine("Workout Suggestions for Underweight:");
-                                    Console.WriteLine("1. Strength training (e.g., weight lifting)");
-                                    Console.WriteLine("2. High-calorie diet");
-                                    break;
-                                case 3:
-                                    Console.WriteLine("Workout Suggestions for Maintaining Health:");
-
-                                    Console.WriteLine("1. Balanced diet");
-                                    Console.WriteLine("2. Regular exercise (e.g., 30 minutes of cardio daily)");
-                                    break;
-                                default:
-                                    Console.WriteLine("Invalid goal choice. Please select a valid option.");
-                                    break;
-                            }
+                            Console.WriteLine("\nPersonalized Recommendations:");
+                            Console.WriteLine(workoutSuggestion);
+                            Console.WriteLine(dietSuggestion);
                         }
                         else
                         {
@@ -452,8 +379,8 @@ namespace fitfinity
                         return;
 
                     case "8":
-                        currentUser = null;
-                        Console.WriteLine("Logged out. Goodbye!");
+                        currentUser = null; 
+                        Console.WriteLine("Logged out. Goodbye!"); 
                         return;
                     case "3":
                         Console.Write("Enter your gender (Male/Female): ");
@@ -544,7 +471,7 @@ namespace fitfinity
 
         private void RecordBMI(string date, double newBMI)
         {
-            string filePath = @"C:\Users\acer\Downloads\New folder\record.txt";
+            string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\record.txt";
 
             // Record the date and new BMI in a file
             using (StreamWriter writer = File.AppendText(filePath))

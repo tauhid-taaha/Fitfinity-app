@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace fitfinity
 {
-    class User
+     class User
     {
         public string Username { get; set; }
         public string Password { get; set; }
@@ -19,7 +19,7 @@ namespace fitfinity
 
         // ... Other user properties like name, age, weight, height, etc.
 
-        public User(string username, string password, string gender, double height, double weight, int age/*, other properties */)
+        public User(string username, string password , string gender, double height, double weight ,int age/*, other properties */)
         {
             Username = username;
             Password = password;
@@ -30,11 +30,11 @@ namespace fitfinity
             // Initialize other properties
         }
 
-        /* 
-         internal void AddWeightRecord(WeightRecord weightRecord)
-         {
-             throw new NotImplementedException();
-         }
-        */
+       /* 
+        internal void AddWeightRecord(WeightRecord weightRecord)
+        {
+            throw new NotImplementedException();
+        }
+       */
     }
 }

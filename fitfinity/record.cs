@@ -10,7 +10,7 @@ namespace fitfinity
     public class record
     {
         //here the bmi and date will be saved...
-        string filePath = @"C:\Users\acer\Downloads\New folder\record.txt";
+        string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\record.txt";
         public List<loadrecord> recordlist = new List<loadrecord>();
 
         public record()
