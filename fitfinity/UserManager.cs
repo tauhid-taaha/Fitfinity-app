@@ -171,17 +171,20 @@ namespace fitfinity
                                 double currentBMI = CalculateBMI(currentUser.Height, currentUser.Weight);
                                 Console.WriteLine($"Your current BMI is: {currentBMI:F2}");
                                 bmi_for = currentBMI;
-                                RecordBMI("Previous BMI", currentBMI);
+                                // RecordBMI("Previous BMI", currentBMI);
+                                rc.RecordBMI(currentUser.Username,currentBMI);
                                 break;
 
                             case "2":
-                                Console.Write("Enter the date (e.g., MM/DD/YYYY): ");
-                                string date = Console.ReadLine();
                                 Console.Write("Enter your new weight (kg): ");
                                 double newWeight = double.Parse(Console.ReadLine());
                                 double newBMI = CalculateBMI(currentUser.Height, newWeight);
-                                UpdateWeight(date, newWeight, newBMI);
-                                break;
+
+                                BmiRecord newBmiRecord = new BmiRecord(currentUser.Username, newBMI);
+                                Console.WriteLine($"New BMI: {newBMI:F2}, Recorded on: {newBmiRecord.RecordDate}");
+
+                                rc.RecordBMI(currentUser.Username, newBMI);
+                                break; 
 
                             default:
                                 Console.WriteLine("Invalid option. Please choose a valid option.");
@@ -307,11 +310,11 @@ namespace fitfinity
                     case "4":
 
                         Console.WriteLine("Choose your activity level: ");
-                        Console.WriteLine("1. Inactive");
-                        Console.WriteLine("2. Light");
-                        Console.WriteLine("3. Moderate");
-                        Console.WriteLine("4. Active");
-                        Console.WriteLine("5. Very Active");
+                        Console.WriteLine("1. Inactive: Little to no exercise");
+                        Console.WriteLine("2. Light: Light exercise/sports 1-3 days/week");
+                        Console.WriteLine("3. Moderate: Moderate exercise/sports 3-5 days/week");
+                        Console.WriteLine("4. Active: Active - Hard exercise/sports 6-7 days a week");
+                        Console.WriteLine("5. Very Active: Very Active - Very hard exercise/sports & physical job or 2x training");
                         string activityChoice = Console.ReadLine();
                         string activityLevel = Console.ReadLine();
 
@@ -339,12 +342,13 @@ namespace fitfinity
 
 
                     case "6":
+                        
                         Console.WriteLine("Choose your activity level: ");
-                        Console.WriteLine("1. Inactive");
-                        Console.WriteLine("2. Light");
-                        Console.WriteLine("3. Moderate");
-                        Console.WriteLine("4. Active");
-                        Console.WriteLine("5. Very Active");
+                        Console.WriteLine("1. Inactive: Little to no exercise");
+                        Console.WriteLine("2. Light: Light exercise/sports 1-3 days/week");
+                        Console.WriteLine("3. Moderate: Moderate exercise/sports 3-5 days/week");
+                        Console.WriteLine("4. Active: Active - Hard exercise/sports 6-7 days a week");
+                        Console.WriteLine("5. Very Active: Very Active - Very hard exercise/sports & physical job or 2x training");
                         string activityChoice2 = Console.ReadLine();
 
                         fitness_recommendation fr= new fitness_recommendation();
@@ -375,7 +379,7 @@ namespace fitfinity
 
 
                     case "7":
-                        rc.PrintAllRecords();
+                        rc.PrintAllRecords(currentUser.Username);
                         return;
 
                     case "8":
@@ -441,27 +445,7 @@ namespace fitfinity
             return bmi;
         }
 
-        void UpdateWeight(string date, double newWeight, double newBMI)
-        {
-            // Find the user in the list
-            User userToUpdate = users.Find(u => u.Username == currentUser.Username);
-
-            if (userToUpdate != null)
-            {
-                // Update the user's weight and save the changes to the file
-                userToUpdate.Weight = newWeight;
-                SaveUsersToFile();
-
-                // Record the date and new BMI in an auto-generated text file
-                RecordBMI(date, newBMI);
-
-                Console.WriteLine($"Weight updated successfully on {date}. New weight: {newWeight} kg");
-            }
-            else
-            {
-                Console.WriteLine("User not found. Weight update failed.");
-            }
-        }
+      
 
         private void SaveUsersToFile()
         {

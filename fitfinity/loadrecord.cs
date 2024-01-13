@@ -8,6 +8,7 @@ namespace fitfinity
 {
     public class loadrecord
     {
+       public  string UserName { get; set; }
         public string date { get; set; }
         public double bmi { get; set; }
     }

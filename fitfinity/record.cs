@@ -42,11 +42,13 @@ namespace fitfinity
             }
         }
 
-        public void PrintAllRecords()
+        public void PrintAllRecords(string userName)
         {
-            foreach (var data in recordlist)
+            var userRecords = recordlist.ToList();
+
+            foreach (var data in userRecords)
             {
-                Console.WriteLine($"Date - {data.date} \t BMI - {data.bmi}");
+                Console.WriteLine($"User Name - {data.UserName} \t Date - {data.date} \t BMI - {data.bmi}");
             }
 
         }
@@ -65,7 +67,16 @@ namespace fitfinity
             }
             return totalCalories;
         }
+       public void RecordBMI(string username,double newBMI)
+        {
+            // Automatically record the date and new BMI in a file
+            using (StreamWriter writer = File.AppendText(filePath))
+            {
+                writer.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},{newBMI:F2}");
+            }
+        }
     }
+  
 
 }
 

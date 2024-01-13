@@ -11,7 +11,7 @@ namespace fitfinity
         public string GenerateWorkoutSuggestion(string activityLevel, string goal, double bmi)
         {
             // Sample workout suggestions
-            string workoutSuggestion = $"Based on your activity level ({activityLevel}), goal ({goal}), and BMI ({bmi}), here is a workout suggestion:\n";
+            string workoutSuggestion = $"Based on your activity level , and BMI ({bmi}), here is a workout suggestion:\n";
 
             // Adjust workout suggestions based on BMI
             if (bmi < 18.5)
@@ -35,7 +35,7 @@ namespace fitfinity
         public string GenerateDietSuggestion(string goal, double bmr)
         {
             // Sample diet suggestions
-            string dietSuggestion = $"For your goal ({goal}) and BMR ({bmr}), here is a diet suggestion:\n";
+            string dietSuggestion = $"For your goal  and BMR ({bmr}), here is a diet suggestion:\n";
 
             // Adjust diet suggestions based on BMR
             if (bmr < 1500)

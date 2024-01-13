@@ -38,11 +38,7 @@ namespace fitfinity
                     }
                 }
             }
-            Console.WriteLine("Loaded Food Items:");
-            foreach (var food in foodsList)
-            {
-                Console.WriteLine($"Name: {food.Name}, Calorie: {food.Calorie}, MealType: {food.MealType}");
-            }
+           
         }
 
         public void PrintFoodNames(string mealType)

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BmiRecord.cs" />
     <Compile Include="Exercise.cs" />
     <Compile Include="fitness_recommendation.cs" />
     <Compile Include="foodload.cs" />
