@@ -27,6 +27,7 @@ namespace fitfinity
             Height = height;
             Weight = weight;
             this.age = age;
+            BMIRecordFilePath = $"BMIRecords\\{username}_records.txt"; // Set default BMI record file path
             // Initialize other properties
         }
 

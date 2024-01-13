@@ -26,25 +26,33 @@ namespace fitfinity
                 {
                     // Split the line of date and bmi using a comma
                     string[] parts = line.Split(',');
-                    if (parts.Length == 2)
+                    if (parts.Length == 3)
                     {
                         // Parse and store the data in the LoadRecord class
                         loadrecord data = new loadrecord
                         {
-                            date = parts[0],
-                            bmi = double.Parse(parts[1])
+                            UserName = parts[0], // Ensure the correct property is assigned
+                            date = parts[1],
+                            bmi = double.Parse(parts[2])
                         };
 
                         // Add the records instance to the list
                         recordlist.Add(data);
                     }
+
                 }
             }
+           
         }
 
         public void PrintAllRecords(string userName)
         {
-            var userRecords = recordlist.ToList();
+            var userRecords = recordlist.Where(record => record.UserName == userName).ToList();
+            if (userRecords.Count == 0)
+            {
+                Console.WriteLine($"No BMI records found for user: {userName}");
+                return;
+            }
 
             foreach (var data in userRecords)
             {
@@ -52,27 +60,17 @@ namespace fitfinity
             }
 
         }
-        public double CalculateTotalCalories(List<int> selectedIndices, List<int> grams)
-        {
-            double totalCalories = 0;
-            for (int i = 0; i < selectedIndices.Count; i++)
-            {
-                int index = selectedIndices[i];
-                if (index >= 0 && index < recordlist.Count)
-                {
-                    double caloriePerGram = recordlist[index].bmi;
-                    int gram = grams[i];
-                    totalCalories += caloriePerGram * gram;
-                }
-            }
-            return totalCalories;
-        }
+       public void printname (string userName) { Console.WriteLine(userName); }
        public void RecordBMI(string username,double newBMI)
         {
             // Automatically record the date and new BMI in a file
-            using (StreamWriter writer = File.AppendText(filePath))
+            if (username != null)
             {
-                writer.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},{newBMI:F2}");
+                // Automatically record the username, date, and new BMI in the file
+                using (StreamWriter writer = File.AppendText(filePath))
+                {
+                    writer.WriteLine($"{username},{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},{newBMI:F2}");
+                }
             }
         }
     }

@@ -379,6 +379,7 @@ namespace fitfinity
 
 
                     case "7":
+                       
                         rc.PrintAllRecords(currentUser.Username);
                         return;
 
