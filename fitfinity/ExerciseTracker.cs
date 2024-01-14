@@ -52,16 +52,29 @@ namespace Fitfinity
                         Console.Write("Enter the duration of your workout (1 to 10 minutes): ");
                         if (int.TryParse(Console.ReadLine(), out int workoutDuration) && workoutDuration >= 1 && workoutDuration <= 10)
                         {
-                            Console.WriteLine($"\nGet ready to begin your workout in 3... 2... 1... Go!");
-
-                            // Simulate a virtual timer countdown
-                            for (int seconds = workoutDuration * 60; seconds > 0; seconds--)
+                            Console.Write($"Enter the number of {exercises[selectedExercise - 1]} repetitions during the entire workout: ");
+                            if (int.TryParse(Console.ReadLine(), out int exerciseRepetitions) && exerciseRepetitions >= 0)
                             {
-                                Console.WriteLine($"[Time Remaining]: {TimeSpan.FromSeconds(seconds)}");
-                                Thread.Sleep(1000); // Sleep for 1 second
-                            }
+                                Console.WriteLine($"\nGet ready to begin your workout in 3... 2... 1... Go!");
 
-                            Console.WriteLine("\n[Workout completed]");
+                                // Simulate a virtual timer countdown
+                                for (int seconds = workoutDuration * 60; seconds > 0; seconds--)
+                                {
+                                    Console.WriteLine($"[Time Remaining]: {TimeSpan.FromSeconds(seconds)}");
+                                    Thread.Sleep(1000); // Sleep for 1 second
+                                }
+
+                                // Calculate calories burned based on MET (Metabolic Equivalent of Task) values
+                                double metValue = CalculateMetValue(exercises[selectedExercise - 1]);
+                                double caloriesBurned = CalculateCaloriesBurned(exerciseRepetitions, workoutDuration, metValue);
+
+                                Console.WriteLine($"\n[Workout completed]");
+                                Console.WriteLine($"Calories burned for {exerciseRepetitions} {exercises[selectedExercise - 1]}: {caloriesBurned:F2} calories");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid number of repetitions. Please enter a non-negative integer.");
+                            }
                         }
                         else
                         {
@@ -83,6 +96,43 @@ namespace Fitfinity
 
             Console.WriteLine("\nThank you for using Fitfinity Exercise Tracker. Keep pushing yourself to reach your fitness goals!");
         }
+
+        private double CalculateMetValue(string exercise)
+        {
+            // MET values for different exercises (values are approximate)
+            switch (exercise.ToLower())
+            {
+                case "jumping jacks":
+                    return 8.0;
+                case "bodyweight squats":
+                    return 5.0;
+                case "push-ups":
+                    return 3.8;
+                case "plank with shoulder taps":
+                    return 4.0;
+                case "kettlebell swings":
+                    return 12.0;
+                case "jump lunges":
+                    return 11.0;
+                case "burpees":
+                    return 14.0;
+                case "mountain climbers":
+                    return 13.0;
+                case "box jumps":
+                    return 8.0;
+                default:
+                    return 1.0; // Default MET value
+            }
+        }
+
+        private double CalculateCaloriesBurned(int repetitions, int durationMinutes, double metValue)
+        {
+            // Total calories burned formula: Calories = (MET * weight in kg * 3.5) / 200 * duration in minutes
+            // For simplicity, assuming a constant weight of 70 kg
+            double weightKg = 70.0;
+            return (metValue * weightKg * 3.5) / 200 * durationMinutes;
+        }
     }
 
+    
 }
