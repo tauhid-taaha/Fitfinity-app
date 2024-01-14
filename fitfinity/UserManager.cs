@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fitfinity;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -154,6 +155,7 @@ namespace fitfinity
                 Console.WriteLine("8. See details");
                 Console.WriteLine("9. Meal Planner");
                 Console.WriteLine("10. User Profile");
+                Console.WriteLine("11.Start Exercise Tracking");
 
 
                 string choice = Console.ReadLine();
@@ -310,6 +312,11 @@ namespace fitfinity
                                     break;
                             }
                         }
+                    case "11":
+                        ExerciseTracker exerciseTracker = new ExerciseTracker();
+                        exerciseTracker.StartExerciseTracker();
+                        break;
+
 
                     case "4":
 

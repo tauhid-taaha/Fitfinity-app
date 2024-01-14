@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="BmiRecord.cs" />
     <Compile Include="Exercise.cs" />
+    <Compile Include="ExerciseTracker.cs" />
     <Compile Include="fitness_recommendation.cs" />
     <Compile Include="foodload.cs" />
     <Compile Include="Foods.cs" />
