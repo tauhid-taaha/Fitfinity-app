@@ -497,7 +497,7 @@ namespace fitfinity
 
                     case "9":
 
-                        string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\calories2.txt";
+                        string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\calories2.txt";
                        
                         Dictionary<string, Foods> foodDatabase = ReadFoodDatabase(filePath);
 
@@ -616,7 +616,7 @@ namespace fitfinity
 
         private void RecordBMI(string date, double newBMI)
         {
-            string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\record.txt";
+            string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\record.txt";
 
             // Record the date and new BMI in a file
             using (StreamWriter writer = File.AppendText(filePath))
