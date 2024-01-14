@@ -156,6 +156,8 @@ namespace fitfinity
                 Console.WriteLine("9. Meal Planner");
                 Console.WriteLine("10. User Profile");
                 Console.WriteLine("11.Start Exercise Tracking");
+                Console.WriteLine("12.Medical FAQ");
+
 
 
                 string choice = Console.ReadLine();
@@ -316,6 +318,11 @@ namespace fitfinity
                         ExerciseTracker exerciseTracker = new ExerciseTracker();
                         exerciseTracker.StartExerciseTracker();
                         break;
+                    case "12":
+                        MedicalFAQ medicalFAQ = new MedicalFAQ();
+                        medicalFAQ.DisplayFAQ();
+                        break;
+
 
 
                     case "4":

@@ -51,6 +51,7 @@
     <Compile Include="Foods.cs" />
     <Compile Include="loadrecord.cs" />
     <Compile Include="Mealinfo.cs" />
+    <Compile Include="MedicalFAQ.cs" />
     <Compile Include="Nutrition.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
