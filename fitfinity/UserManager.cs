@@ -9,7 +9,7 @@ namespace fitfinity
     {
         private List<User> users;
         private User currentUser;
-        
+
 
         public UserManager()
         {
@@ -113,10 +113,10 @@ namespace fitfinity
                 currentUser = user; // Set the current user;
                 Console.WriteLine("Login successful. Welcome, " + user.Username + "!");
 
-               /// Record "previous BMI" for the first BMI count
+                /// Record "previous BMI" for the first BMI count
                 if (string.IsNullOrEmpty(user.BMIRecordFilePath))
                 {
-                    
+
                 }
 
                 return true;
@@ -152,12 +152,13 @@ namespace fitfinity
                 Console.WriteLine("6. Calculate Ideal Weight");
                 Console.WriteLine("7. Set Goals");
                 Console.WriteLine("8. See details");
-                Console.WriteLine("9. User Profile");
+                Console.WriteLine("9. Meal Planner");
+                Console.WriteLine("10. User Profile");
 
 
                 string choice = Console.ReadLine();
                 record rc = new record();
-                
+
 
                 switch (choice)
                 {
@@ -175,7 +176,7 @@ namespace fitfinity
                                 Console.WriteLine($"Your current BMI is: {currentBMI:F2}");
                                 bmi_for = currentBMI;
                                 // RecordBMI("Previous BMI", currentBMI);
-                                rc.RecordBMI(currentUser.Username,currentBMI);
+                                rc.RecordBMI(currentUser.Username, currentBMI);
                                 break;
 
                             case "2":
@@ -187,7 +188,7 @@ namespace fitfinity
                                 Console.WriteLine($"New BMI: {newBMI:F2}, Recorded on: {newBmiRecord.RecordDate}");
 
                                 rc.RecordBMI(currentUser.Username, newBMI);
-                                break; 
+                                break;
 
                             default:
                                 Console.WriteLine("Invalid option. Please choose a valid option.");
@@ -258,7 +259,7 @@ namespace fitfinity
                                             if (selected == 0)
                                             {
                                                 // Calculate total calories for the meal and store in the mealData dictionary
-                                                double totalCalories = fd.CalculateTotalCalories(mealType,selectedFoodIndices, grams);
+                                                double totalCalories = fd.CalculateTotalCalories(mealType, selectedFoodIndices, grams);
                                                 mealData[mealType] = mealData.ContainsKey(mealType)
                                                     ? mealData[mealType].Concat(new[] { (int)totalCalories }).ToList()
                                                     : new List<int> { (int)totalCalories };
@@ -302,7 +303,7 @@ namespace fitfinity
 
                                 case "6": // Exit the program
                                     ShowMenu();
-                                    return ;
+                                    return;
 
                                 default:
                                     Console.WriteLine("Enter a valid option.");
@@ -345,7 +346,7 @@ namespace fitfinity
 
 
                     case "7":
-                        
+
                         Console.WriteLine("Choose your activity level: ");
                         Console.WriteLine("1. Inactive: Little to no exercise");
                         Console.WriteLine("2. Light: Light exercise/sports 1-3 days/week");
@@ -354,10 +355,10 @@ namespace fitfinity
                         Console.WriteLine("5. Very Active: Very Active - Very hard exercise/sports & physical job or 2x training");
                         string activityChoice2 = Console.ReadLine();
 
-                        fitness_recommendation fr= new fitness_recommendation();
+                        fitness_recommendation fr = new fitness_recommendation();
 
 
-                    
+
                         Console.WriteLine("Choose your goal:");
                         Console.WriteLine("1. Weight Loss");
                         Console.WriteLine("2. Weight Gain");
@@ -367,7 +368,7 @@ namespace fitfinity
                         {
                             // Get the weight and age from the current user
                             double currentWeight = currentUser.Weight;
-                            
+
 
                             Console.Write("Enter the duration of your goal in days: ");
                             int goalDurationDays = int.Parse(Console.ReadLine());
@@ -408,7 +409,7 @@ namespace fitfinity
                             // Suggested diet and exercise plans (based on BMR and goal)
                             fitness_recommendation fR = new fitness_recommendation();
                             string workoutSuggestion = fR.GenerateWorkoutSuggestion(currentUser.ActivityLevel, goalChoice, CalculateBMI(currentUser.Height, currentUser.Weight));
-                            string dietSuggestion = fR.GenerateDietSuggestion(goalChoice, Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height,currentUser.age));
+                            string dietSuggestion = fR.GenerateDietSuggestion(goalChoice, Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age));
 
                             Console.WriteLine("\nPersonalized Recommendations:");
                             Console.WriteLine(workoutSuggestion);
@@ -422,7 +423,7 @@ namespace fitfinity
 
 
                     case "8":
-                       
+
                         rc.PrintAllRecords(currentUser.Username);
                         return;
                     case "6":
@@ -433,12 +434,12 @@ namespace fitfinity
 
 
 
-                    case "9": // User Profile
+                    case "10": // User Profile
                         DisplayUserProfile(currentUser);
                         break;
 
                         // Add the following method to your UserManager class
-                         void DisplayUserProfile(User user)
+                        void DisplayUserProfile(User user)
                         {
                             Console.WriteLine("User Profile");
                             Console.WriteLine($"Name:             {user.Username}");
@@ -486,6 +487,59 @@ namespace fitfinity
                             }
                         }
 
+
+                    case "9":
+
+                        string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\calories2.txt";
+                       
+                        Dictionary<string, Foods> foodDatabase = ReadFoodDatabase(filePath);
+
+                        Console.Write("Enter your daily calorie goal for BREAKFAST: ");
+                        if (double.TryParse(Console.ReadLine(), out double breakfastCalorieGoal))
+                        {
+                            Console.Write("Enter your daily calorie goal for LUNCH: ");
+                            if (double.TryParse(Console.ReadLine(), out double lunchCalorieGoal))
+                            {
+                                Console.Write("Enter your daily calorie goal for SNACKS: ");
+                                if (double.TryParse(Console.ReadLine(), out double snacksCalorieGoal))
+                                {
+                                    Console.Write("Enter your daily calorie goal for DINNER: ");
+                                    if (double.TryParse(Console.ReadLine(), out double dinnerCalorieGoal))
+                                    {
+                                        Dictionary<string, List<Foods>> mealPlan = GenerateRandomMealPlan(foodDatabase, breakfastCalorieGoal, lunchCalorieGoal, snacksCalorieGoal, dinnerCalorieGoal);
+
+                                        Console.WriteLine("\nYour Random Meal Plan:");
+                                        foreach (var entry in mealPlan)
+                                        {
+                                            Console.WriteLine($"\n{entry.Key.ToUpper()}:");
+
+                                            foreach (var foodItem in entry.Value)
+                                            {
+                                                Console.WriteLine($"{foodItem.Name}, {foodItem.Weight} grams, {foodItem.Calorie} calories, {foodItem.FoodType}");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Invalid input for dinner calorie goal. Please enter a valid number.");
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid input for snacks calorie goal. Please enter a valid number.");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid input for lunch calorie goal. Please enter a valid number.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid input for breakfast calorie goal. Please enter a valid number.");
+                        }
+
+                        break;
                     case "3":
                         Console.Write("Enter your gender (Male/Female): ");
                         string gender = Console.ReadLine();
@@ -545,7 +599,7 @@ namespace fitfinity
             return bmi;
         }
 
-      
+
 
         private void SaveUsersToFile()
         {
@@ -561,6 +615,177 @@ namespace fitfinity
             using (StreamWriter writer = File.AppendText(filePath))
             {
                 writer.WriteLine($"{date},{newBMI:F2}");
+            }
+        }
+
+
+        static Dictionary<string, Foods> ReadFoodDatabase(string filePath)
+        {
+            Dictionary<string, Foods> foodDatabase = new Dictionary<string, Foods>();
+
+            foreach (string line in File.ReadLines(filePath))
+            {
+                string[] parts = line.Split(',');
+                if (parts.Length == 4) // Adjust the length to match your new file format
+                {
+                    string name = parts[0].Trim();
+                    double calorie = double.Parse(parts[1]);
+                    string mealType = parts[2].Trim().ToLower();
+                    string foodType = parts[3].Trim(); // Assuming the food type is the fourth element
+
+                    foodDatabase[name] = new Foods(name, calorie, mealType, foodType);
+                }
+            }
+
+            return foodDatabase;
+        }
+        static Dictionary<string, List<Foods>> GenerateRandomMealPlan(Dictionary<string, Foods> foodDatabase, double breakfastCalorieGoal, double lunchCalorieGoal, double snacksCalorieGoal, double dinnerCalorieGoal)
+        {
+            Dictionary<string, List<Foods>> mealPlan = new Dictionary<string, List<Foods>>()
+    {
+        {"breakfast", new List<Foods>()},
+        {"lunch", new List<Foods>()},
+        {"snacks", new List<Foods>()},
+        {"dinner", new List<Foods>()}
+    };
+
+            Random random = new Random();
+            int maxAttempts = 100; // Maximum number of attempts to find a suitable combination
+
+            foreach (var mealType in mealPlan.Keys)
+            {
+                double calorieGoal = 0;
+
+                switch (mealType)
+                {
+                    case "breakfast":
+                        calorieGoal = breakfastCalorieGoal;
+                        break;
+                    case "lunch":
+                        calorieGoal = lunchCalorieGoal;
+                        break;
+                    case "snacks":
+                        calorieGoal = snacksCalorieGoal;
+                        break;
+                    case "dinner":
+                        calorieGoal = dinnerCalorieGoal;
+                        break;
+                }
+
+                for (int attempt = 0; attempt < maxAttempts; attempt++)
+                {
+                    mealPlan[mealType].Clear(); // Clear previous attempts
+
+                    // Define the target ratio of calories for each food type
+                    double proteinRatio = 1.0 / 3.0;
+                    double carbRatio = 1.0 / 3.0;
+                    double vegetableRatio = 1.0 / 3.0;
+
+                    // Calculate the target calories for each food type
+                    double proteinCalories = calorieGoal * proteinRatio;
+                    double carbCalories = calorieGoal * carbRatio;
+                    double vegetableCalories = calorieGoal * vegetableRatio;
+
+                    // Add a random protein item
+                    AddRandomFoodItem(mealPlan[mealType], foodDatabase, "Protein", proteinCalories, random);
+
+                    // Add a random carb item
+                    AddRandomFoodItem(mealPlan[mealType], foodDatabase, "Carb", carbCalories, random);
+
+                    // Add a random vegetable item
+                    AddRandomFoodItem(mealPlan[mealType], foodDatabase, "Vegetable", vegetableCalories, random);
+
+                    // Check if the generated combination meets the criteria
+                    if (IsTargetRatioMet(mealPlan[mealType], proteinRatio, carbRatio, vegetableRatio))
+                    {
+                        break; // Valid combination found
+                    }
+                }
+            }
+
+            return mealPlan;
+        }
+
+        static void AddRandomFoodItem(List<Foods> mealList, Dictionary<string, Foods> foodDatabase, string foodType, double targetCalories, Random random)
+        {
+            List<Foods> availableFoodItems = foodDatabase.Values
+                .Where(food => food.FoodType == foodType)
+                .ToList();
+
+            if (availableFoodItems.Count > 0)
+            {
+                int randomIndex = random.Next(availableFoodItems.Count);
+                Foods randomFoodItem = availableFoodItems[randomIndex];
+
+                double maxWeight = targetCalories / randomFoodItem.Calorie;
+                double minWeight = Math.Max(0, maxWeight * 0.95); // 5% below the max
+                double suggestedWeight = random.NextDouble() * (maxWeight - minWeight) + minWeight;
+
+                // Add the food item to the meal plan with the calculated weight
+                mealList.Add(new Foods(randomFoodItem.Name, randomFoodItem.Calorie, suggestedWeight, randomFoodItem.MealType, randomFoodItem.FoodType));
+            }
+        }
+
+        static bool IsTargetRatioMet(List<Foods> mealList, double proteinRatio, double carbRatio, double vegetableRatio)
+        {
+            double proteinCalories = 0;
+            double carbCalories = 0;
+            double vegetableCalories = 0;
+
+            foreach (var food in mealList)
+            {
+                switch (food.FoodType)
+                {
+                    case "Protein":
+                        proteinCalories += food.Calorie * food.Weight;
+                        break;
+                    case "Carb":
+                        carbCalories += food.Calorie * food.Weight;
+                        break;
+                    case "Vegetable":
+                        vegetableCalories += food.Calorie * food.Weight;
+                        break;
+                }
+            }
+
+            // Check if the actual ratios are close to the target ratios
+            double epsilon = 0.01; // Adjust as needed
+            return Math.Abs(proteinCalories / mealList.Sum(food => food.Calorie) - proteinRatio) < epsilon &&
+                   Math.Abs(carbCalories / mealList.Sum(food => food.Calorie) - carbRatio) < epsilon &&
+                   Math.Abs(vegetableCalories / mealList.Sum(food => food.Calorie) - vegetableRatio) < epsilon;
+        }
+
+
+
+
+
+        static void PrintMealPlan(List<Foods> meal)
+        {
+            foreach (var foodItem in meal)
+            {
+                Console.WriteLine($"{foodItem.Name}, {foodItem.Weight} grams, {foodItem.Calorie} calories, {foodItem.FoodType}");
+            }
+        }
+        static bool CheckMacroRatios(List<Foods> meal, double proteinRatio, double carbRatio, double vegetableRatio)
+        {
+            var proteinWeight = meal.Where(food => food.FoodType == "Protein").Sum(food => food.Weight);
+            var carbWeight = meal.Where(food => food.FoodType == "Carb").Sum(food => food.Weight);
+            var vegetableWeight = meal.Where(food => food.FoodType == "Vegetable").Sum(food => food.Weight);
+
+            return Math.Abs(proteinWeight / carbWeight - proteinRatio / carbRatio) < 0.1
+                && Math.Abs(proteinWeight / vegetableWeight - proteinRatio / vegetableRatio) < 0.1;
+        }
+
+        static void DisplayMealPlan(string mealType, Dictionary<string, List<Foods>> mealPlan)
+        {
+            Console.WriteLine($"\nYour Random {mealType} Meal Plan:");
+            foreach (var entry in mealPlan)
+            {
+                Console.WriteLine($"\n{entry.Key.ToUpper()}:");
+                foreach (var foodItem in entry.Value)
+                {
+                    Console.WriteLine($"{foodItem.Name}, {foodItem.Weight} grams, {foodItem.Calorie} calories, {foodItem.FoodType}");
+                }
             }
         }
     }
