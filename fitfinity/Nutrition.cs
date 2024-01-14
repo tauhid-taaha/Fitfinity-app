@@ -73,6 +73,26 @@ namespace fitfinity
 
             return bmr;
         }
+        public static double CalculateIdealWeight(string gender, double height)
+        {
+            double idealWeight;
+
+            if (gender.Equals("Male", StringComparison.OrdinalIgnoreCase))
+            {
+                idealWeight = 50 + 2.3 * ((height / 2.54) - 60);
+            }
+            else if (gender.Equals("Female", StringComparison.OrdinalIgnoreCase))
+            {
+                idealWeight = 45.5 + 2.3 * ((height / 2.54) - 60);
+            }
+            else
+            {
+                // Handle other genders or throw an exception if needed
+                throw new ArgumentException("Invalid gender. Supported genders are 'Male' and 'Female'.");
+            }
+
+            return idealWeight;
+        }
 
 
     }

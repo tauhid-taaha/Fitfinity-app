@@ -149,8 +149,11 @@ namespace fitfinity
                 Console.WriteLine("3. Calculate steps per mile and determine Activity Level");
                 Console.WriteLine("4. Calculate daily calories");
                 Console.WriteLine("5. Calculate Daily Calorie Intake");
-                Console.WriteLine("6. Set Goals");
-                Console.WriteLine("7. See Details");
+                Console.WriteLine("6. Calculate Ideal Weight");
+                Console.WriteLine("7. Set Goals");
+                Console.WriteLine("8. See details");
+                Console.WriteLine("9. User Profile");
+
 
                 string choice = Console.ReadLine();
                 record rc = new record();
@@ -341,7 +344,7 @@ namespace fitfinity
                         break;
 
 
-                    case "6":
+                    case "7":
                         
                         Console.WriteLine("Choose your activity level: ");
                         Console.WriteLine("1. Inactive: Little to no exercise");
@@ -354,17 +357,58 @@ namespace fitfinity
                         fitness_recommendation fr= new fitness_recommendation();
 
 
+                    
                         Console.WriteLine("Choose your goal:");
                         Console.WriteLine("1. Weight Loss");
-                        Console.WriteLine("2. Underweight");
-                        Console.WriteLine("3. Keep Healthy");
-
+                        Console.WriteLine("2. Weight Gain");
                         string goalChoice = Console.ReadLine();
 
                         if (int.TryParse(goalChoice, out int selectedGoal))
                         {
-                            string workoutSuggestion = fr.GenerateWorkoutSuggestion(activityChoice2, goalChoice, bmi_for);
-                            string dietSuggestion = fr.GenerateDietSuggestion(goalChoice, bmr_for);
+                            // Get the weight and age from the current user
+                            double currentWeight = currentUser.Weight;
+                            
+
+                            Console.Write("Enter the duration of your goal in days: ");
+                            int goalDurationDays = int.Parse(Console.ReadLine());
+
+                            double targetWeight = Nutrition.CalculateIdealWeight(currentUser.Gender, currentUser.Height);
+
+                            // Check if the target weight is not less than current weight for weight loss
+                            if (selectedGoal == 1 && targetWeight >= currentWeight)
+                            {
+                                Console.WriteLine("Sorry, it's not healthy for you to lose weight as you are already underweight.");
+                                break;
+                            }
+
+                            // Check if the target weight is not greater than current weight for weight gain
+                            if (selectedGoal == 2 && targetWeight <= currentWeight)
+                            {
+                                Console.WriteLine("Sorry, it's not healthy for you to gain weight as you are already overweight.");
+                                break;
+                            }
+
+                            double weightChangePerWeek = Math.Abs((currentWeight - targetWeight) / (goalDurationDays / 7.0));
+                            double dailyCaloricDeficit = weightChangePerWeek * 7700 / 7.0;
+
+                            Console.WriteLine($"Your target weight: {targetWeight:F2} kg");
+                            Console.WriteLine($"To achieve your goal in {goalDurationDays} days:");
+
+                            if (selectedGoal == 1)
+                            {
+                                Console.WriteLine($"You need to lose approximately {weightChangePerWeek:F2} kg per week.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"You need to gain approximately {weightChangePerWeek:F2} kg per week.");
+                            }
+
+                            Console.WriteLine($"Maintain a daily caloric deficit of {dailyCaloricDeficit:F2} calories.");
+
+                            // Suggested diet and exercise plans (based on BMR and goal)
+                            fitness_recommendation fR = new fitness_recommendation();
+                            string workoutSuggestion = fR.GenerateWorkoutSuggestion(currentUser.ActivityLevel, goalChoice, CalculateBMI(currentUser.Height, currentUser.Weight));
+                            string dietSuggestion = fR.GenerateDietSuggestion(goalChoice, Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height,currentUser.age));
 
                             Console.WriteLine("\nPersonalized Recommendations:");
                             Console.WriteLine(workoutSuggestion);
@@ -377,16 +421,71 @@ namespace fitfinity
                         break;
 
 
-
-                    case "7":
+                    case "8":
                        
                         rc.PrintAllRecords(currentUser.Username);
                         return;
+                    case "6":
+                        Console.WriteLine("Calculate Ideal Weight:");
+                        double idealWeight = Nutrition.CalculateIdealWeight(currentUser.Gender, currentUser.Height);
+                        Console.WriteLine($"Your Ideal Weight is: {idealWeight:F2} kg");
+                        break;
 
-                    case "8":
-                        currentUser = null; 
-                        Console.WriteLine("Logged out. Goodbye!"); 
-                        return;
+
+
+                    case "9": // User Profile
+                        DisplayUserProfile(currentUser);
+                        break;
+
+                        // Add the following method to your UserManager class
+                         void DisplayUserProfile(User user)
+                        {
+                            Console.WriteLine("User Profile");
+                            Console.WriteLine($"Name:             {user.Username}");
+                            Console.WriteLine($"Age:              {user.age}");
+                            Console.WriteLine($"Height:           {user.Height} cm");
+                            Console.WriteLine($"BMI:              {CalculateBMI(user.Height, user.Weight):F2}");
+                            Console.WriteLine($"BMR:              {Nutrition.CalculateBmr(user.Gender, user.Weight, user.Height, user.age):F2} calories");
+                            Console.WriteLine($"Current Weight:   {user.Weight} kg");
+
+                            Console.WriteLine("Options:");
+                            Console.WriteLine("1. Update Weight");
+                            Console.WriteLine("2. Log Out");
+                            Console.WriteLine("3. Go Back");
+
+                            string userProfileOption = Console.ReadLine();
+
+                            switch (userProfileOption)
+                            {
+                                case "1":
+                                    Console.Write("Enter your new weight (kg): ");
+                                    if (double.TryParse(Console.ReadLine(), out double newWeight))
+                                    {
+                                        user.Weight = newWeight;
+                                        SaveUserToFile(user);
+                                        Console.WriteLine("Weight updated successfully.");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Invalid input for weight. Please enter a valid number.");
+                                    }
+                                    break;
+
+                                case "2":
+                                    currentUser = null;
+                                    Console.WriteLine("Logged out. Goodbye!");
+                                    break;
+
+                                case "3":
+                                    // Go back to the main menu
+                                    break;
+
+                                default:
+                                    Console.WriteLine("Invalid option. Please enter a valid choice.");
+                                    break;
+                            }
+                        }
+
                     case "3":
                         Console.Write("Enter your gender (Male/Female): ");
                         string gender = Console.ReadLine();
@@ -442,7 +541,7 @@ namespace fitfinity
             // Calculate BMI using the formula: BMI = weight (kg) / (height (m) * height (m))
             double heightInMeters = height / 100.0; // Convert height from cm to meters
             double bmi = weight / (heightInMeters * heightInMeters);
-            Console.WriteLine($"Debug: Height (cm): {height}, Height (m): {heightInMeters}, Weight (kg): {weight}, BMI: {bmi}");
+            Console.WriteLine($"Height (cm): {height}, Height (m): {heightInMeters}, Weight (kg): {weight}, BMI: {bmi}");
             return bmi;
         }
 

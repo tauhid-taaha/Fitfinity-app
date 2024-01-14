@@ -10,7 +10,7 @@ namespace fitfinity
     public class record
     {
         //here the bmi and date will be saved...
-        string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\record.txt";
+        string filePath = @"C:\Users\Lenovo\Downloads\New folder\fitfinity\bin\Debug\record.txt";
         public List<loadrecord> recordlist = new List<loadrecord>();
 
         public record()
@@ -19,25 +19,28 @@ namespace fitfinity
         }
         public void LoadDataFromFile()
         {
+            if (
+               File.Exists( filePath ) ) { 
             using (StreamReader reader = new StreamReader(filePath))
             {
                 string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    // Split the line of date and bmi using a comma
-                    string[] parts = line.Split(',');
-                    if (parts.Length == 3)
+                    while ((line = reader.ReadLine()) != null)
                     {
-                        // Parse and store the data in the LoadRecord class
-                        loadrecord data = new loadrecord
+                        // Split the line of date and bmi using a comma
+                        string[] parts = line.Split(',');
+                        if (parts.Length == 3)
                         {
-                            UserName = parts[0], // Ensure the correct property is assigned
-                            date = parts[1],
-                            bmi = double.Parse(parts[2])
-                        };
+                            // Parse and store the data in the LoadRecord class
+                            loadrecord data = new loadrecord
+                            {
+                                UserName = parts[0], // Ensure the correct property is assigned
+                                date = parts[1],
+                                bmi = double.Parse(parts[2])
+                            };
 
-                        // Add the records instance to the list
-                        recordlist.Add(data);
+                            // Add the records instance to the list
+                            recordlist.Add(data);
+                        }
                     }
 
                 }

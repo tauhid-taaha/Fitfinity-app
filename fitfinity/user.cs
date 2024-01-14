@@ -16,6 +16,7 @@ namespace fitfinity
         public double Weight { get; set; }
         public int age { get; set; }
         public string BMIRecordFilePath { get; internal set; }
+        public string ActivityLevel { get; set; }
 
         // ... Other user properties like name, age, weight, height, etc.
 
