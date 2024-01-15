@@ -146,15 +146,14 @@ namespace fitfinity
                 Console.WriteLine("Choose an option:");
                 Console.WriteLine("1. Calculate BMI");
                 Console.WriteLine("2. Calculate BMR");
-
-                Console.WriteLine("3. Calculate steps per mile and determine Activity Level");
-                Console.WriteLine("4. Calculate daily calories");
+                Console.WriteLine("3. Calculate daily steps manually And Determine Activity Level");
+                Console.WriteLine("4. Calculate daily calories need");
                 Console.WriteLine("5. Calculate Daily Calorie Intake");
                 Console.WriteLine("6. Calculate Ideal Weight");
                 Console.WriteLine("7. Set Goals");
-                Console.WriteLine("8. See details");
+                Console.WriteLine("8. See Previous BMI History");
                 Console.WriteLine("9. Meal Planner");
-                Console.WriteLine("10. User Profile");
+                Console.WriteLine("10.User Profile");
                 Console.WriteLine("11.Start Exercise Tracking");
                 Console.WriteLine("12.Medical FAQ");
 
@@ -318,10 +317,44 @@ namespace fitfinity
                         ExerciseTracker exerciseTracker = new ExerciseTracker();
                         exerciseTracker.StartExerciseTracker();
                         break;
+                    // Add the following case in the UserManager class
+
+                    // Add the following case in the UserManager class
+
                     case "12":
                         MedicalFAQ medicalFAQ = new MedicalFAQ();
-                        medicalFAQ.DisplayFAQ();
+                        string selectedQuestion = "";
+
+                        do
+                        {
+                            medicalFAQ.DisplayFAQ();
+                            Console.Write("\nEnter the number of the question you want to view, type 'back' to go back to the main menu, or 'prev' to go back to the previous questions: ");
+                            string input = Console.ReadLine();
+
+                            if (input.ToLower() == "back")
+                            {
+                                Console.WriteLine("\nGoing back to the main menu.");
+                                break; // Exit the do-while loop to return to the main menu
+                            }
+                            else if (input.ToLower() == "prev" && !string.IsNullOrEmpty(selectedQuestion))
+                            {
+                                selectedQuestion = "";
+                                Console.WriteLine("\nGoing back to the previous questions.");
+                            }
+                            else if (int.TryParse(input, out int questionNumber))
+                            {
+                                medicalFAQ.AnswerQuestion(questionNumber.ToString());
+                                selectedQuestion = questionNumber.ToString();
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nInvalid input. Please enter a valid question number, 'back', or 'prev'.");
+                            }
+
+                        } while (true);
+
                         break;
+
 
 
 
@@ -555,45 +588,36 @@ namespace fitfinity
 
                         break;
                     case "3":
-                        Console.Write("Enter your gender (Male/Female): ");
-                        string gender = Console.ReadLine();
+                        // Use the current user's gender and height
+                        string gender = currentUser.Gender;
+                        double height = currentUser.Height; // Convert height from cm to inches
 
-                        Console.Write("Enter your height in inches: ");
-                        if (double.TryParse(Console.ReadLine(), out double heightInches))
+                        Console.Write($"Enter how much time you took to walk a mile in minutes (Use Watch): ");
+                        if (double.TryParse(Console.ReadLine(), out double minutesPerMile))
                         {
-                            Console.Write("Enter your pace in minutes per mile: ");
-                            if (double.TryParse(Console.ReadLine(), out double paceMinutesPerMile))
+                            Console.Write("Enter how many miles you have walked: ");
+                            if (double.TryParse(Console.ReadLine(), out double milesWalked))
                             {
-                                Console.Write("Enter how many miles you have walked: ");
-                                if (double.TryParse(Console.ReadLine(), out double milesWalked))
-                                {
-                                    // Calculate daily steps based on the provided information
-                                    int totalSteps = Exercise.CalculateStepsPerMile(paceMinutesPerMile, heightInches, gender, milesWalked);
-                                    Console.WriteLine($"Your daily steps: {totalSteps}");
+                                // Calculate daily steps based on the provided information
+                                int totalSteps = Exercise.CalculateStepsPerMile(minutesPerMile, height, gender, milesWalked);
+                                Console.WriteLine($"Your daily steps: {totalSteps}");
+                                Console.WriteLine("Manual step counting, without the use of sensors, may sometimes lead to inaccuracies in results.");
 
-                                    // Determine activity level based on the calculated daily steps
-                                    String ActivityLevel = Exercise.DetermineActivityLevel(totalSteps);
-                                    Console.WriteLine($"Your activity level: {ActivityLevel}");
-                                }
-                                else
-
-
-
-
-                                {
-                                    Console.WriteLine("Invalid miles walked value. Please enter a valid number.");
-                                }
+                                // Determine activity level based on the calculated daily steps
+                                string ActivityLevel = Exercise.DetermineActivityLevel(totalSteps);
+                                Console.WriteLine($"Your activity level: {ActivityLevel}");
                             }
                             else
                             {
-                                Console.WriteLine("Invalid pace value. Please enter a valid number.");
+                                Console.WriteLine("Invalid miles walked value. Please enter a valid number.");
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Invalid height value. Please enter a valid number.");
+                            Console.WriteLine("Invalid pace value. Please enter a valid number.");
                         }
                         break;
+
 
                     default:
                         Console.WriteLine("Invalid option. Please choose a valid option.");

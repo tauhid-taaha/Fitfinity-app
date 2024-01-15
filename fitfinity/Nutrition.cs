@@ -73,7 +73,7 @@ namespace fitfinity
 
             return bmr;
         }
-        public static double CalculateIdealWeight(string gender, double height)
+        public static double CalculateIdealWeight (string gender, double height)
         {
             double idealWeight;
 

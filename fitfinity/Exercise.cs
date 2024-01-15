@@ -10,7 +10,7 @@ namespace fitfinity
 {
     public class Exercise
     {
-        public static int CalculateStepsPerMile(double paceMinutesPerMile, double heightInches, string gender,double mile)
+        public static int CalculateStepsPerMile(double minutesPerMile, double height, string gender,double mile)
         {
             double stepsPerMile;
             double totalsteps;
@@ -18,12 +18,12 @@ namespace fitfinity
 
             if (gender.Equals("Male", StringComparison.OrdinalIgnoreCase))
             {
-                stepsPerMile = 1084 + (143.6 * paceMinutesPerMile) - (13.5 * heightInches);
+                stepsPerMile = 1084 + (143.6 * minutesPerMile) - (13.5 * height * 0.394);
                 totalsteps = stepsPerMile * mile;
             }
             else if (gender.Equals("Female", StringComparison.OrdinalIgnoreCase))
             {
-                stepsPerMile = 1949 + (63.4 * paceMinutesPerMile) - (14.1 * heightInches);
+                stepsPerMile = 1949 + (63.4 * minutesPerMile) - (14.1 * height * 0.394);
                 totalsteps = stepsPerMile * mile;
 
 
@@ -38,7 +38,7 @@ namespace fitfinity
 
         }
 
-        public static string DetermineActivityLevel(int totalSteps)
+        public static string DetermineActivityLevel(double totalSteps)
         {
             if (totalSteps < 5000)
             {
