@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace fitfinity
 {
@@ -138,6 +139,19 @@ namespace fitfinity
         public void ShowMenu()
 
         {
+            string name = "███████╗██╗████████╗███████╗██╗███╗   ██╗██╗████████╗██╗   ██╗\r\n██╔════╝██║╚══██╔══╝██╔════╝██║████╗  ██║██║╚══██╔══╝╚██╗ ██╔╝\r\n█████╗  ██║   ██║   █████╗  ██║██╔██╗ ██║██║   ██║    ╚████╔╝ \r\n██╔══╝  ██║   ██║   ██╔══╝  ██║██║╚██╗██║██║   ██║     ╚██╔╝  \r\n██║     ██║   ██║   ██║     ██║██║ ╚████║██║   ██║      ██║   \r\n╚═╝     ╚═╝   ╚═╝   ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝   ╚═╝      ╚═╝   \r\n                                                              ";
+            string motto = "┬ ┬┌─┐┬ ┬┬─┐  ┌─┐┬┌┬┐┌┐┌┌─┐┌─┐┌─┐  ┌┬┐┬─┐┌─┐┌─┐┬┌─┌─┐┬─┐\r\n└┬┘│ ││ │├┬┘  ├┤ │ │ │││├┤ └─┐└─┐   │ ├┬┘├─┤│  ├┴┐├┤ ├┬┘\r\n ┴ └─┘└─┘┴└─  └  ┴ ┴ ┘└┘└─┘└─┘└─┘   ┴ ┴└─┴ ┴└─┘┴ ┴└─┘┴└─";
+            void DisplayTitle2()
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(name);
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(motto);
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.ResetColor();
+            }
 
             double bmi_for = 0;
             double bmr_for = 0;
@@ -165,6 +179,8 @@ namespace fitfinity
                 switch (choice)
                 {
                     case "1":
+                        Console.Clear   ();
+                        DisplayTitle2 ();
                         Console.WriteLine("Choose an option:");
                         Console.WriteLine("1. Current BMI");
                         Console.WriteLine("2. Calculate BMI with new weight");
@@ -175,8 +191,10 @@ namespace fitfinity
                         {
                             case "1":
                                 double currentBMI = CalculateBMI(currentUser.Height, currentUser.Weight);
+                                Console.ForegroundColor= ConsoleColor.Cyan;
                                 Console.WriteLine($"Your current BMI is: {currentBMI:F2}");
                                 bmi_for = currentBMI;
+                                Console.ResetColor ();
                                 // RecordBMI("Previous BMI", currentBMI);
                                 rc.RecordBMI(currentUser.Username, currentBMI);
                                 break;
@@ -187,8 +205,9 @@ namespace fitfinity
                                 double newBMI = CalculateBMI(currentUser.Height, newWeight);
 
                                 BmiRecord newBmiRecord = new BmiRecord(currentUser.Username, newBMI);
+                                Console.ForegroundColor = ConsoleColor.Cyan;
                                 Console.WriteLine($"New BMI: {newBMI:F2}, Recorded on: {newBmiRecord.RecordDate}");
-
+                                Console.ResetColor();
                                 rc.RecordBMI(currentUser.Username, newBMI);
                                 break;
 
@@ -198,14 +217,18 @@ namespace fitfinity
                         }
                         break;
 
-                    case "2":
+                    case "2":Console.Clear ();
+                        DisplayTitle2();
                         Console.WriteLine("Calculating BMR...");
                         double bmr = Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age);
                         bmr_for = bmr;
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+
                         Console.WriteLine($"Your Basal Metabolic Rate (BMR) is: {bmr:F2} calories");
+                        Console.ResetColor();
                         break;
 
-
+                       
 
                     case "5":
 
@@ -300,7 +323,9 @@ namespace fitfinity
 
                                 case "5": // Calculate Overall Daily Calories
                                     double overallCalories = mealData.Values.SelectMany(list => list).Sum();
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
                                     Console.WriteLine($"Overall Daily Calories: {overallCalories}");
+                                    Console.ResetColor();
                                     break;
 
                                 case "6": // Exit the program
@@ -515,6 +540,9 @@ namespace fitfinity
                                     {
                                         Dictionary<string, List<Foods>> mealPlan = GenerateRandomMealPlan(foodDatabase, breakfastCalorieGoal, lunchCalorieGoal, snacksCalorieGoal, dinnerCalorieGoal);
 
+                                        Console.Clear();
+                                        DisplayTitle2();
+                                        Console.ForegroundColor = ConsoleColor.Cyan;
                                         Console.WriteLine("\nYour Random Meal Plan:");
                                         foreach (var entry in mealPlan)
                                         {
@@ -525,6 +553,7 @@ namespace fitfinity
                                                 Console.WriteLine($"{foodItem.Name}, {foodItem.Weight} grams, {foodItem.Calorie} calories, {foodItem.FoodType}");
                                             }
                                         }
+                                        Console.ResetColor();
                                     }
                                     else
                                     {
@@ -602,8 +631,11 @@ namespace fitfinity
             // Calculate BMI using the formula: BMI = weight (kg) / (height (m) * height (m))
             double heightInMeters = height / 100.0; // Convert height from cm to meters
             double bmi = weight / (heightInMeters * heightInMeters);
+            Console.ForegroundColor= ConsoleColor.Cyan;
+
             Console.WriteLine($"Height (cm): {height}, Height (m): {heightInMeters}, Weight (kg): {weight}, BMI: {bmi}");
             return bmi;
+            Console.ResetColor();
         }
 
 
