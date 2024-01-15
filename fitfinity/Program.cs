@@ -132,14 +132,21 @@ namespace fitfinity
                             }
                         }
                         break;
-                       case "2":
+                       case "2": Console.ForegroundColor = ConsoleColor.DarkGreen;
                                 Console.Write("Enter your username: ");
+                        Console.ResetColor();
                                 string username = Console.ReadLine();
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
                                 Console.Write("Enter your password: ");
+                        Console.ResetColor ();
                                 string password = Console.ReadLine();
                                 if (userManager.AuthenticateUser(username, password)  || userManager.AuthenticateUser(username , password))
-                                {
+                                { Console.Clear() ; ;
+                            DisplayTitle(); Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Red;
+
                                     Console.WriteLine("Login Succesful");
+                            Console.ResetColor();
                                     userManager.ShowMenu(); // Show menu options after successful login
                                 }
                                 break;

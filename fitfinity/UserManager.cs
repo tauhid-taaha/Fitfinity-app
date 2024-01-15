@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace fitfinity
 {
@@ -112,8 +113,9 @@ namespace fitfinity
             if ((user != null && (user.Password == password)))
             {
                 currentUser = user; // Set the current user;
+                Console.ForegroundColor= ConsoleColor.Red;
                 Console.WriteLine("Login successful. Welcome, " + user.Username + "!");
-
+                Console.ResetColor();
                 /// Record "previous BMI" for the first BMI count
                 if (string.IsNullOrEmpty(user.BMIRecordFilePath))
                 {
@@ -138,11 +140,27 @@ namespace fitfinity
         public void ShowMenu()
 
         {
+            string name = "███████╗██╗████████╗███████╗██╗███╗   ██╗██╗████████╗██╗   ██╗\r\n██╔════╝██║╚══██╔══╝██╔════╝██║████╗  ██║██║╚══██╔══╝╚██╗ ██╔╝\r\n█████╗  ██║   ██║   █████╗  ██║██╔██╗ ██║██║   ██║    ╚████╔╝ \r\n██╔══╝  ██║   ██║   ██╔══╝  ██║██║╚██╗██║██║   ██║     ╚██╔╝  \r\n██║     ██║   ██║   ██║     ██║██║ ╚████║██║   ██║      ██║   \r\n╚═╝     ╚═╝   ╚═╝   ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝   ╚═╝      ╚═╝   \r\n                                                              ";
+            string motto = "┬ ┬┌─┐┬ ┬┬─┐  ┌─┐┬┌┬┐┌┐┌┌─┐┌─┐┌─┐  ┌┬┐┬─┐┌─┐┌─┐┬┌─┌─┐┬─┐\r\n└┬┘│ ││ │├┬┘  ├┤ │ │ │││├┤ └─┐└─┐   │ ├┬┘├─┤│  ├┴┐├┤ ├┬┘\r\n ┴ └─┘└─┘┴└─  └  ┴ ┴ ┘└┘└─┘└─┘└─┘   ┴ ┴└─┴ ┴└─┘┴ ┴└─┘┴└─";
+            void DisplayTitle2()
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(name);
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(motto);
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.ResetColor();
+            }
 
             double bmi_for = 0;
             double bmr_for = 0;
             while (true)
             {
+
+
+               
                 Console.WriteLine("Choose an option:");
                 Console.WriteLine("1. Calculate BMI");
                 Console.WriteLine("2. Calculate BMR");
@@ -157,7 +175,7 @@ namespace fitfinity
                 Console.WriteLine("11.Start Exercise Tracking");
                 Console.WriteLine("12.Medical FAQ");
 
-
+                Console.ResetColor();
 
                 string choice = Console.ReadLine();
                 record rc = new record();
@@ -166,6 +184,8 @@ namespace fitfinity
                 switch (choice)
                 {
                     case "1":
+                        Console.Clear   ();
+                        DisplayTitle2 ();
                         Console.WriteLine("Choose an option:");
                         Console.WriteLine("1. Current BMI");
                         Console.WriteLine("2. Calculate BMI with new weight");
@@ -176,8 +196,10 @@ namespace fitfinity
                         {
                             case "1":
                                 double currentBMI = CalculateBMI(currentUser.Height, currentUser.Weight);
+                                Console.ForegroundColor= ConsoleColor.Cyan;
                                 Console.WriteLine($"Your current BMI is: {currentBMI:F2}");
                                 bmi_for = currentBMI;
+                                Console.ResetColor ();
                                 // RecordBMI("Previous BMI", currentBMI);
                                 rc.RecordBMI(currentUser.Username, currentBMI);
                                 break;
@@ -188,8 +210,9 @@ namespace fitfinity
                                 double newBMI = CalculateBMI(currentUser.Height, newWeight);
 
                                 BmiRecord newBmiRecord = new BmiRecord(currentUser.Username, newBMI);
+                                Console.ForegroundColor = ConsoleColor.Cyan;
                                 Console.WriteLine($"New BMI: {newBMI:F2}, Recorded on: {newBmiRecord.RecordDate}");
-
+                                Console.ResetColor();
                                 rc.RecordBMI(currentUser.Username, newBMI);
                                 break;
 
@@ -197,24 +220,30 @@ namespace fitfinity
                                 Console.WriteLine("Invalid option. Please choose a valid option.");
                                 break;
                         }
+                        Console.ResetColor();
                         break;
 
-                    case "2":
+                    case "2":Console.Clear ();
+                        DisplayTitle2();
                         Console.WriteLine("Calculating BMR...");
                         double bmr = Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age);
                         bmr_for = bmr;
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+
                         Console.WriteLine($"Your Basal Metabolic Rate (BMR) is: {bmr:F2} calories");
+                        Console.ResetColor();
                         break;
 
-
+                       
 
                     case "5":
-
+                        Console.Clear();
+                        DisplayTitle2();
                         Dictionary<string, List<int>> mealData = new Dictionary<string, List<int>>();
                         foodload fd = new foodload();
 
                         while (true)
-                        {
+                        { Console.ForegroundColor= ConsoleColor.Cyan;
                             Console.WriteLine("Select a meal to input food details:");
                             Console.WriteLine("1. Breakfast");
                             Console.WriteLine("2. Lunch");
@@ -222,7 +251,7 @@ namespace fitfinity
                             Console.WriteLine("4. Dinner");
                             Console.WriteLine("5. Calculate Overall Daily Calories");
                             Console.WriteLine("6. Exit");
-
+                            Console.ResetColor ();
                             string mealType = Console.ReadLine();
 
                             switch (mealType)
@@ -277,7 +306,9 @@ namespace fitfinity
                                             else if (fd.IsValidFoodIndex(mealType, selected))
                                             {
                                                 selectedFoodIndices.Add(selected - 1);
+                                                Console.ForegroundColor= ConsoleColor.Cyan;
                                                 Console.Write("Enter the number of grams of this food item: ");
+                                                Console.ResetColor();
                                                 if (int.TryParse(Console.ReadLine(), out int gram))
                                                 {
                                                     grams.Add(gram);
@@ -301,7 +332,9 @@ namespace fitfinity
 
                                 case "5": // Calculate Overall Daily Calories
                                     double overallCalories = mealData.Values.SelectMany(list => list).Sum();
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
                                     Console.WriteLine($"Overall Daily Calories: {overallCalories}");
+                                    Console.ResetColor();
                                     break;
 
                                 case "6": // Exit the program
@@ -472,7 +505,7 @@ namespace fitfinity
                     case "8":
 
                         rc.PrintAllRecords(currentUser.Username);
-                        return;
+                        break;
                     case "6":
                         Console.WriteLine("Calculate Ideal Weight:");
                         double idealWeight = Nutrition.CalculateIdealWeight(currentUser.Gender, currentUser.Height);
@@ -537,7 +570,7 @@ namespace fitfinity
 
                     case "9":
 
-                        string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\calories2.txt";
+                        string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\calories2.txt";
                        
                         Dictionary<string, Foods> foodDatabase = ReadFoodDatabase(filePath);
 
@@ -555,6 +588,9 @@ namespace fitfinity
                                     {
                                         Dictionary<string, List<Foods>> mealPlan = GenerateRandomMealPlan(foodDatabase, breakfastCalorieGoal, lunchCalorieGoal, snacksCalorieGoal, dinnerCalorieGoal);
 
+                                        Console.Clear();
+                                        DisplayTitle2();
+                                        Console.ForegroundColor = ConsoleColor.Cyan;
                                         Console.WriteLine("\nYour Random Meal Plan:");
                                         foreach (var entry in mealPlan)
                                         {
@@ -565,6 +601,7 @@ namespace fitfinity
                                                 Console.WriteLine($"{foodItem.Name}, {foodItem.Weight} grams, {foodItem.Calorie} calories, {foodItem.FoodType}");
                                             }
                                         }
+                                        Console.ResetColor();
                                     }
                                     else
                                     {
@@ -633,8 +670,11 @@ namespace fitfinity
             // Calculate BMI using the formula: BMI = weight (kg) / (height (m) * height (m))
             double heightInMeters = height / 100.0; // Convert height from cm to meters
             double bmi = weight / (heightInMeters * heightInMeters);
+            Console.ForegroundColor= ConsoleColor.Cyan;
+
             Console.WriteLine($"Height (cm): {height}, Height (m): {heightInMeters}, Weight (kg): {weight}, BMI: {bmi}");
             return bmi;
+            Console.ResetColor();
         }
 
 
@@ -647,7 +687,7 @@ namespace fitfinity
 
         private void RecordBMI(string date, double newBMI)
         {
-            string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\record.txt";
+            string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\record.txt";
 
             // Record the date and new BMI in a file
             using (StreamWriter writer = File.AppendText(filePath))
@@ -764,7 +804,39 @@ namespace fitfinity
             }
         }
 
-        static bool IsTargetRatioMet(List<Foods> mealList, double proteinRatio, double carbRatio, double vegetableRatio)
+        private static string ReadUserInfo(string username)
+        {
+            // Specify the path to the user.txt file
+            string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\users.txt";
+
+            try
+            {
+                // Read all lines from the file
+                string[] lines = File.ReadAllLines(filePath);
+
+                // Find the line with the user information based on the username
+                foreach (string line in lines)
+                {
+                    string[] userValues = line.Split(':');
+                    if (userValues[0].Equals(username, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return line;
+                    }
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("File not found. Please make sure the user.txt file exists.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            return null;
+        }
+    
+    static bool IsTargetRatioMet(List<Foods> mealList, double proteinRatio, double carbRatio, double vegetableRatio)
         {
             double proteinCalories = 0;
             double carbCalories = 0;
