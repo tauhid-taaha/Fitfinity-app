@@ -113,8 +113,9 @@ namespace fitfinity
             if ((user != null && (user.Password == password)))
             {
                 currentUser = user; // Set the current user;
+                Console.ForegroundColor= ConsoleColor.Red;
                 Console.WriteLine("Login successful. Welcome, " + user.Username + "!");
-
+                Console.ResetColor();
                 /// Record "previous BMI" for the first BMI count
                 if (string.IsNullOrEmpty(user.BMIRecordFilePath))
                 {
@@ -157,6 +158,9 @@ namespace fitfinity
             double bmr_for = 0;
             while (true)
             {
+
+
+               
                 Console.WriteLine("Choose an option:");
                 Console.WriteLine("1. Calculate BMI");
                 Console.WriteLine("2. Calculate BMR");
@@ -172,7 +176,7 @@ namespace fitfinity
                 Console.WriteLine("11.Start Exercise Tracking");
                 Console.WriteLine("12.Medical FAQ");
 
-
+                Console.ResetColor();
 
                 string choice = Console.ReadLine();
                 record rc = new record();
@@ -217,6 +221,7 @@ namespace fitfinity
                                 Console.WriteLine("Invalid option. Please choose a valid option.");
                                 break;
                         }
+                        Console.ResetColor();
                         break;
 
                     case "2":Console.Clear ();
@@ -233,12 +238,13 @@ namespace fitfinity
                        
 
                     case "5":
-
+                        Console.Clear();
+                        DisplayTitle2();
                         Dictionary<string, List<int>> mealData = new Dictionary<string, List<int>>();
                         foodload fd = new foodload();
 
                         while (true)
-                        {
+                        { Console.ForegroundColor= ConsoleColor.Cyan;
                             Console.WriteLine("Select a meal to input food details:");
                             Console.WriteLine("1. Breakfast");
                             Console.WriteLine("2. Lunch");
@@ -246,7 +252,7 @@ namespace fitfinity
                             Console.WriteLine("4. Dinner");
                             Console.WriteLine("5. Calculate Overall Daily Calories");
                             Console.WriteLine("6. Exit");
-
+                            Console.ResetColor ();
                             string mealType = Console.ReadLine();
 
                             switch (mealType)
@@ -301,7 +307,9 @@ namespace fitfinity
                                             else if (fd.IsValidFoodIndex(mealType, selected))
                                             {
                                                 selectedFoodIndices.Add(selected - 1);
+                                                Console.ForegroundColor= ConsoleColor.Cyan;
                                                 Console.Write("Enter the number of grams of this food item: ");
+                                                Console.ResetColor();
                                                 if (int.TryParse(Console.ReadLine(), out int gram))
                                                 {
                                                     grams.Add(gram);
@@ -464,7 +472,7 @@ namespace fitfinity
                     case "8":
 
                         rc.PrintAllRecords(currentUser.Username);
-                        return;
+                        break;
                     case "6":
                         Console.WriteLine("Calculate Ideal Weight:");
                         double idealWeight = Nutrition.CalculateIdealWeight(currentUser.Gender, currentUser.Height);
@@ -529,7 +537,7 @@ namespace fitfinity
 
                     case "9":
 
-                        string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\calories2.txt";
+                        string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\calories2.txt";
                        
                         Dictionary<string, Foods> foodDatabase = ReadFoodDatabase(filePath);
 
@@ -655,7 +663,7 @@ namespace fitfinity
 
         private void RecordBMI(string date, double newBMI)
         {
-            string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\record.txt";
+            string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\record.txt";
 
             // Record the date and new BMI in a file
             using (StreamWriter writer = File.AppendText(filePath))
@@ -772,7 +780,39 @@ namespace fitfinity
             }
         }
 
-        static bool IsTargetRatioMet(List<Foods> mealList, double proteinRatio, double carbRatio, double vegetableRatio)
+        private static string ReadUserInfo(string username)
+        {
+            // Specify the path to the user.txt file
+            string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\users.txt";
+
+            try
+            {
+                // Read all lines from the file
+                string[] lines = File.ReadAllLines(filePath);
+
+                // Find the line with the user information based on the username
+                foreach (string line in lines)
+                {
+                    string[] userValues = line.Split(':');
+                    if (userValues[0].Equals(username, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return line;
+                    }
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("File not found. Please make sure the user.txt file exists.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            return null;
+        }
+    
+    static bool IsTargetRatioMet(List<Foods> mealList, double proteinRatio, double carbRatio, double vegetableRatio)
         {
             double proteinCalories = 0;
             double carbCalories = 0;
