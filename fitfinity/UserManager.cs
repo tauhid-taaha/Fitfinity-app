@@ -12,7 +12,7 @@ namespace fitfinity
         private List<User> users;
         private User currentUser;
 
-
+        Dictionary<string, Dictionary<string, List<int>>> userData = new Dictionary<string, Dictionary<string, List<int>>>();
         public UserManager()
         {
             users = new List<User>();
@@ -144,6 +144,11 @@ namespace fitfinity
         public void ShowMenu()
 
         {
+            if (!userData.ContainsKey(currentUser.Username))
+            {
+                // If not, create an entry for the user with an empty daily calorie dictionary
+                userData[currentUser.Username] = new Dictionary<string, List<int>>();
+            }
             string name = "███████╗██╗████████╗███████╗██╗███╗   ██╗██╗████████╗██╗   ██╗\r\n██╔════╝██║╚══██╔══╝██╔════╝██║████╗  ██║██║╚══██╔══╝╚██╗ ██╔╝\r\n█████╗  ██║   ██║   █████╗  ██║██╔██╗ ██║██║   ██║    ╚████╔╝ \r\n██╔══╝  ██║   ██║   ██╔══╝  ██║██║╚██╗██║██║   ██║     ╚██╔╝  \r\n██║     ██║   ██║   ██║     ██║██║ ╚████║██║   ██║      ██║   \r\n╚═╝     ╚═╝   ╚═╝   ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝   ╚═╝      ╚═╝   \r\n                                                              ";
             string motto = "┬ ┬┌─┐┬ ┬┬─┐  ┌─┐┬┌┬┐┌┐┌┌─┐┌─┐┌─┐  ┌┬┐┬─┐┌─┐┌─┐┬┌─┌─┐┬─┐\r\n└┬┘│ ││ │├┬┘  ├┤ │ │ │││├┤ └─┐└─┐   │ ├┬┘├─┤│  ├┴┐├┤ ├┬┘\r\n ┴ └─┘└─┘┴└─  └  ┴ ┴ ┘└┘└─┘└─┘└─┘   ┴ ┴└─┴ ┴└─┘┴ ┴└─┘┴└─";
             void DisplayTitle2()
@@ -241,10 +246,14 @@ namespace fitfinity
                        
 
                     case "5":
+
                         Console.Clear();
                         DisplayTitle2();
+                       
+                       
                         Dictionary<string, List<int>> mealData = new Dictionary<string, List<int>>();
                         foodload fd = new foodload();
+                        string record_file = @"C:\Users\Tauhid\Downloads\fitfinity_solid\firtfinity_Solid\firtfinity_Solid\bin\Debug\calorietracker.txt";
 
                         while (true)
                         { Console.ForegroundColor= ConsoleColor.Cyan;
@@ -254,7 +263,8 @@ namespace fitfinity
                             Console.WriteLine("3. Snacks");
                             Console.WriteLine("4. Dinner");
                             Console.WriteLine("5. Calculate Overall Daily Calories");
-                            Console.WriteLine("6. Exit");
+                            Console.WriteLine("6.VIEW PAST RECORD");
+                            Console.WriteLine("7. Exit");
                             Console.ResetColor ();
                             string mealType = Console.ReadLine();
 
@@ -338,10 +348,19 @@ namespace fitfinity
                                     double overallCalories = mealData.Values.SelectMany(list => list).Sum();
                                     Console.ForegroundColor = ConsoleColor.Cyan;
                                     Console.WriteLine($"Overall Daily Calories: {overallCalories}");
+                                    SaveDailyCaloriesData(currentUser.Username, DateTime.Now.ToString("yyyy-MM-dd"),mealData);
                                     Console.ResetColor();
                                     break;
 
-                                case "6": // Exit the program
+
+                                case "6":
+                                    ViewPastDailyCalories (currentUser.Username);
+                                    Console.ResetColor ();
+                                    break;
+
+                                case "7": // Exit the program
+                                    Console.Clear();
+                                    DisplayTitle2();
                                     ShowMenu();
                                     return;
 
@@ -349,6 +368,56 @@ namespace fitfinity
                                     Console.WriteLine("Enter a valid option.");
                                     break;
                             }
+                          
+                             void ViewPastDailyCalories(string username)
+                            {
+                                Console.Write("Enter the number of past days to view calories: ");
+                                if (int.TryParse(Console.ReadLine(), out int days))
+                                {
+                                    LoadPastDailyCalories(username, days);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid input. Please enter a valid number of days.");
+                                }
+                            }
+                             void LoadPastDailyCalories(string username, int days)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Viewing daily calories for the past {days} days for {username}:");
+                                Console.ResetColor();
+
+                                if (userData.ContainsKey(username))
+                                {
+                                    Dictionary<string, List<int>> userMealData = userData[username];
+
+                                    // Read data from the file
+                                    List<string> lines = File.ReadLines(record_file).Reverse().Take(days).ToList();
+
+                                    foreach (string line in lines)
+                                    {   Console.ForegroundColor=ConsoleColor.Yellow;
+                                        Console.WriteLine(line);
+                                    }
+                                    Console.ResetColor();
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"User {username} not found.");
+                                }
+                            }
+                          
+                            void SaveDailyCaloriesData(string username, string date, Dictionary<string, List<int>> dailyCalories)
+                            {
+                                using (StreamWriter writer = new StreamWriter(record_file, append: true))
+                                {
+                                    string calorieDataString = string.Join(";", dailyCalories.Select(kvp => $"{kvp.Key}:{string.Join(",", kvp.Value)}"));
+                                    writer.WriteLine($"{username}, {date}, {calorieDataString}");
+                                }
+                            }
+                          
+
+                           
+
                         }
                     case "11":
                         ExerciseTracker exerciseTracker = new ExerciseTracker(currentUser.Weight);
@@ -898,6 +967,46 @@ namespace fitfinity
                 && Math.Abs(proteinWeight / vegetableWeight - proteinRatio / vegetableRatio) < 0.1;
         }
 
+        string calorie_file= @"C:\Users\Tauhid\Downloads\fitfinity_solid\firtfinity_Solid\firtfinity_Solid\bin\Debug\calorietracker.txt";
+       public void LoadDailyCaloriesData(string username)
+        {
+            if (File.Exists(calorie_file))
+            {
+                string[] calorieLines = File.ReadAllLines(calorie_file);
+
+                foreach (string calorieLine in calorieLines)
+                {
+                    string[] calorieParts = calorieLine.Split(',');
+                    if (calorieParts.Length == 3)
+                    {
+                        string storedUsername = calorieParts[0].Trim();
+                        if (storedUsername == username)
+                        {
+                            string date = calorieParts[1].Trim();
+                            string[] mealDataParts = calorieParts[2].Split(';');
+                            Dictionary<string, List<int>> userDailyCalories = new Dictionary<string, List<int>>();
+
+                            foreach (string mealDataPart in mealDataParts)
+                            {
+                                string[] mealParts = mealDataPart.Split(':');
+                                if (mealParts.Length == 2)
+                                {
+                                    string mealType2 = mealParts[0].Trim();
+                                    List<int> caloriesList = mealParts[1].Split(',').Select(int.Parse).ToList();
+                                    userDailyCalories[mealType2] = caloriesList;
+                                }
+                            }
+
+                            // Update the userData dictionary with the loaded data for the current user
+                            userData[username] = userDailyCalories;
+
+                            // Exit the loop after loading the data for the current user
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         static void DisplayMealPlan(string mealType, Dictionary<string, List<Foods>> mealPlan)
         {
             Console.WriteLine($"\nYour Random {mealType} Meal Plan:");

@@ -114,6 +114,7 @@ namespace fitfinity
                                     if (userManager.AuthenticateUser(Username, Password))
                                     {
                                         Console.WriteLine("Login Successful");
+                                        userManager.LoadDailyCaloriesData(Username);
                                         userManager.ShowMenu();
                                     }
                                     else
