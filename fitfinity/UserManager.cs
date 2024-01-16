@@ -113,9 +113,13 @@ namespace fitfinity
             if ((user != null && (user.Password == password)))
             {
                 currentUser = user; // Set the current user;
+                ExerciseTracker exerciseTracker = new ExerciseTracker(currentUser.Weight);
+
+
                 Console.ForegroundColor= ConsoleColor.Red;
                 Console.WriteLine("Login successful. Welcome, " + user.Username + "!");
                 Console.ResetColor();
+                
                 /// Record "previous BMI" for the first BMI count
                 if (string.IsNullOrEmpty(user.BMIRecordFilePath))
                 {
@@ -347,7 +351,7 @@ namespace fitfinity
                             }
                         }
                     case "11":
-                        ExerciseTracker exerciseTracker = new ExerciseTracker();
+                        ExerciseTracker exerciseTracker = new ExerciseTracker(currentUser.Weight);
                         exerciseTracker.StartExerciseTracker();
                         break;
                     // Add the following case in the UserManager class

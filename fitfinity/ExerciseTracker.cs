@@ -1,12 +1,21 @@
-﻿using System;
+﻿using fitfinity;
+using System;
 using System.Threading;
 
 namespace Fitfinity
 {
     internal class ExerciseTracker
     {
+        public double Weight { get;  set; }
+
+        public ExerciseTracker(double weight)
+        {
+            Weight = weight;
+        }
+        
         public void StartExerciseTracker()
         {
+            
             Console.WriteLine("Welcome to Fitfinity Exercise Tracker!");
 
             do
@@ -15,10 +24,17 @@ namespace Fitfinity
                 Console.WriteLine("1. Beginner");
                 Console.WriteLine("2. Intermediate");
                 Console.WriteLine("3. Advanced");
+                Console.WriteLine("4. Push-ups");
 
                 Console.Write("Enter the number corresponding to your fitness level: ");
-                if (int.TryParse(Console.ReadLine(), out int fitnessLevel) && fitnessLevel >= 1 && fitnessLevel <= 3)
+                if (int.TryParse(Console.ReadLine(), out int fitnessLevel) && fitnessLevel >= 1 && fitnessLevel <= 4)
                 {
+                    if (fitnessLevel == 4)
+                    {
+                        TrackPushUps();
+                        continue;
+                    }
+
                     Console.WriteLine($"\nGreat choice! Now, let's pick an exercise from your selected level:");
 
                     string[] exercises;
@@ -64,12 +80,20 @@ namespace Fitfinity
                                     Thread.Sleep(1000); // Sleep for 1 second
                                 }
 
-                                // Calculate calories burned based on MET (Metabolic Equivalent of Task) values
-                                double metValue = CalculateMetValue(exercises[selectedExercise - 1]);
-                                double caloriesBurned = CalculateCaloriesBurned(exerciseRepetitions, workoutDuration, metValue);
+                                // Check if the selected exercise is "Push-ups"
+                                if (exercises[selectedExercise - 1].Equals("Push-ups", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    TrackPushUps();
+                                }
+                                else
+                                {
+                                    // Calculate calories burned based on MET (Metabolic Equivalent of Task) values
+                                    double metValue = CalculateMetValue(exercises[selectedExercise - 1]);
+                                    double caloriesBurned = CalculateCaloriesBurned(exerciseRepetitions, workoutDuration, metValue, Weight);
 
-                                Console.WriteLine($"\n[Workout completed]");
-                                Console.WriteLine($"Calories burned for {exerciseRepetitions} {exercises[selectedExercise - 1]}: {caloriesBurned:F2} calories");
+                                    Console.WriteLine($"\n[Workout completed]");
+                                    Console.WriteLine($"Calories burned for {exerciseRepetitions} repetition {exercises[selectedExercise - 1]}: {caloriesBurned:F2} calories");
+                                }
                             }
                             else
                             {
@@ -88,7 +112,7 @@ namespace Fitfinity
                 }
                 else
                 {
-                    Console.WriteLine("Invalid fitness level. Please enter a number between 1 and 3.");
+                    Console.WriteLine("Invalid fitness level. Please enter a number between 1 and 4.");
                 }
 
                 Console.Write("\nDo you want to track another exercise? (yes/no): ");
@@ -97,7 +121,36 @@ namespace Fitfinity
             Console.WriteLine("\nThank you for using Fitfinity Exercise Tracker. Keep pushing yourself to reach your fitness goals!");
         }
 
-        private double CalculateMetValue(string exercise)
+        public void TrackPushUps()
+        {
+            Console.WriteLine("Select the intensity of push-ups:");
+            Console.WriteLine("1. Moderate Effort (MET: 3.8)");
+            Console.WriteLine("2. Vigorous Effort (MET: 8.0)");
+
+            Console.Write("Enter the number corresponding to your selected intensity: ");
+            if (int.TryParse(Console.ReadLine(), out int intensityChoice) && (intensityChoice == 1 || intensityChoice == 2))
+            {
+                double metValue = (intensityChoice == 1) ? 3.8 : 8.0;
+
+                Console.Write("Enter the number of push-ups you want to track: ");
+                if (int.TryParse(Console.ReadLine(), out int pushUpRepetitions) && pushUpRepetitions >= 0)
+                {
+                    Console.WriteLine("\n[Workout completed]");
+                    double caloriesBurned = (metValue * Weight * pushUpRepetitions) / 200;
+                    Console.WriteLine($"Calories burned for {pushUpRepetitions} push-ups: {caloriesBurned:F2} calories");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid number of push-ups. Please enter a non-negative integer.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid intensity choice. Please enter 1 or 2.");
+            }
+        }
+
+        public double CalculateMetValue(string exercise)
         {
             // MET values for different exercises (values are approximate)
             switch (exercise.ToLower())
@@ -106,8 +159,8 @@ namespace Fitfinity
                     return 8.0;
                 case "bodyweight squats":
                     return 5.0;
-                case "push-ups":
-                    return 3.8;
+                case "lunges":
+                    return 5.5;
                 case "plank with shoulder taps":
                     return 4.0;
                 case "kettlebell swings":
@@ -125,12 +178,12 @@ namespace Fitfinity
             }
         }
 
-        private double CalculateCaloriesBurned(int repetitions, int durationMinutes, double metValue)
+         double CalculateCaloriesBurned(int repetitions, int durationMinutes, double metValue,double Weight)
         {
             // Total calories burned formula: Calories = (MET * weight in kg * 3.5) / 200 * duration in minutes
             // For simplicity, assuming a constant weight of 70 kg
-            double weightKg = 70.0;
-            return (metValue * weightKg * 3.5) / 200 * durationMinutes;
+            
+            return (metValue * Weight * 3.5) / 200 * durationMinutes;
         }
     }
 
