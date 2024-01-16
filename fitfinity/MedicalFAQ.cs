@@ -54,8 +54,11 @@ namespace Fitfinity
             if (faq.TryGetValue(questionNumber, out string answer))
             {
                 string[] questionParts = faq[questionNumber].Split('?');
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"\nQuestion {questionNumber}: {questionParts[0]}?");
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"{questionParts[1]}");
+                Console.ResetColor();
             }
             else
             {

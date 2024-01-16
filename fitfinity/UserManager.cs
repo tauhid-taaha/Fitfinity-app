@@ -310,6 +310,8 @@ namespace fitfinity
                                                     ? mealData[mealType].Concat(new[] { (int)totalCalories }).ToList()
                                                     : new List<int> { (int)totalCalories };
                                                 Console.WriteLine($"Total Calories for {mealType}: {totalCalories}");
+                                                Console.Clear();
+                                                DisplayTitle2();
                                                 break;
                                             }
                                             else if (selected == -1)
@@ -347,7 +349,10 @@ namespace fitfinity
                                 case "5": // Calculate Overall Daily Calories
                                     double overallCalories = mealData.Values.SelectMany(list => list).Sum();
                                     Console.ForegroundColor = ConsoleColor.Cyan;
-                                    Console.WriteLine($"Overall Daily Calories: {overallCalories}");
+                                    Console.Write($"Overall Daily Calories: ");
+                                    Console.ForegroundColor=ConsoleColor.Red;
+                                    Console.WriteLine(overallCalories );
+
                                     SaveDailyCaloriesData(currentUser.Username, DateTime.Now.ToString("yyyy-MM-dd"),mealData);
                                     Console.ResetColor();
                                     break;
@@ -355,6 +360,7 @@ namespace fitfinity
 
                                 case "6":
                                     ViewPastDailyCalories (currentUser.Username);
+                                    Console.WriteLine();
                                     Console.ResetColor ();
                                     break;
 
@@ -598,6 +604,7 @@ namespace fitfinity
                         // Add the following method to your UserManager class
                         void DisplayUserProfile(User user)
                         {
+                            Console.ForegroundColor = ConsoleColor.Cyan;
                             Console.WriteLine("User Profile");
                             Console.WriteLine($"Name:             {user.Username}");
                             Console.WriteLine($"Age:              {user.age}");
@@ -605,7 +612,7 @@ namespace fitfinity
                             Console.WriteLine($"BMI:              {CalculateBMI(user.Height, user.Weight):F2}");
                             Console.WriteLine($"BMR:              {Nutrition.CalculateBmr(user.Gender, user.Weight, user.Height, user.age):F2} calories");
                             Console.WriteLine($"Current Weight:   {user.Weight} kg");
-
+                            Console.ResetColor();
                             Console.WriteLine("Options:");
                             Console.WriteLine("1. Update Weight");
                             Console.WriteLine("2. Log Out");
@@ -837,8 +844,8 @@ namespace fitfinity
 
                     // Define the target ratio of calories for each food type
                     double proteinRatio = 1.0 / 3.0;
-                    double carbRatio = 1.0 / 3.0;
-                    double vegetableRatio = 1.0 / 3.0;
+                    double carbRatio = 1.0 / 6.0;
+                    double vegetableRatio = 1.0 / 2.0;
 
                     // Calculate the target calories for each food type
                     double proteinCalories = calorieGoal * proteinRatio;

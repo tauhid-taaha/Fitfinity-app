@@ -20,12 +20,14 @@ namespace Fitfinity
 
             do
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nChoose your exercise level:");
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("1. Beginner");
                 Console.WriteLine("2. Intermediate");
                 Console.WriteLine("3. Advanced");
                 Console.WriteLine("4. Push-ups");
-
+                Console.ResetColor();
                 Console.Write("Enter the number corresponding to your fitness level: ");
                 if (int.TryParse(Console.ReadLine(), out int fitnessLevel) && fitnessLevel >= 1 && fitnessLevel <= 4)
                 {
@@ -38,8 +40,9 @@ namespace Fitfinity
                     Console.WriteLine($"\nGreat choice! Now, let's pick an exercise from your selected level:");
 
                     string[] exercises;
+                    Console.ForegroundColor= ConsoleColor.Cyan;
                     switch (fitnessLevel)
-                    {
+                    { 
                         case 1:
                             exercises = new string[] { "Jumping Jacks", "Bodyweight Squats", "Push-ups" };
                             break;
@@ -63,8 +66,9 @@ namespace Fitfinity
                     Console.Write("Enter the number of the exercise you want to track: ");
                     if (int.TryParse(Console.ReadLine(), out int selectedExercise) && selectedExercise >= 1 && selectedExercise <= exercises.Length)
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"\nAwesome! You've selected {exercises[selectedExercise - 1]}. Let's get started with your workout.");
-
+                        Console.ForegroundColor=ConsoleColor.Cyan;
                         Console.Write("Enter the duration of your workout (1 to 10 minutes): ");
                         if (int.TryParse(Console.ReadLine(), out int workoutDuration) && workoutDuration >= 1 && workoutDuration <= 10)
                         {
@@ -75,8 +79,15 @@ namespace Fitfinity
 
                                 // Simulate a virtual timer countdown
                                 for (int seconds = workoutDuration * 60; seconds > 0; seconds--)
-                                {
+                                {   Console.ForegroundColor= ConsoleColor.Red;
+
                                     Console.WriteLine($"[Time Remaining]: {TimeSpan.FromSeconds(seconds)}");
+                                    if (Console.KeyAvailable)
+                                    {
+                                        // Clear the key buffer
+                                        Console.ReadKey(true);
+                                        break; // Exit the loop if a key is pressed
+                                    }
                                     Thread.Sleep(1000); // Sleep for 1 second
                                 }
 
@@ -90,9 +101,10 @@ namespace Fitfinity
                                     // Calculate calories burned based on MET (Metabolic Equivalent of Task) values
                                     double metValue = CalculateMetValue(exercises[selectedExercise - 1]);
                                     double caloriesBurned = CalculateCaloriesBurned(exerciseRepetitions, workoutDuration, metValue, Weight);
-
+                                    Console.ForegroundColor=(ConsoleColor.Cyan);
                                     Console.WriteLine($"\n[Workout completed]");
                                     Console.WriteLine($"Calories burned for {exerciseRepetitions} repetition {exercises[selectedExercise - 1]}: {caloriesBurned:F2} calories");
+                                    Console.ResetColor();
                                 }
                             }
                             else
@@ -124,20 +136,26 @@ namespace Fitfinity
         public void TrackPushUps()
         {
             Console.WriteLine("Select the intensity of push-ups:");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("1. Moderate Effort (MET: 3.8)");
             Console.WriteLine("2. Vigorous Effort (MET: 8.0)");
-
+            Console.ForegroundColor= ConsoleColor.Cyan;
             Console.Write("Enter the number corresponding to your selected intensity: ");
+            Console.ResetColor();
             if (int.TryParse(Console.ReadLine(), out int intensityChoice) && (intensityChoice == 1 || intensityChoice == 2))
             {
                 double metValue = (intensityChoice == 1) ? 3.8 : 8.0;
-
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Enter the number of push-ups you want to track: ");
+                Console.ResetColor();
                 if (int.TryParse(Console.ReadLine(), out int pushUpRepetitions) && pushUpRepetitions >= 0)
-                {
+                {              Console.ForegroundColor=ConsoleColor.Red;
                     Console.WriteLine("\n[Workout completed]");
                     double caloriesBurned = (metValue * Weight * pushUpRepetitions) / 200;
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+
                     Console.WriteLine($"Calories burned for {pushUpRepetitions} push-ups: {caloriesBurned:F2} calories");
+                    Console.ResetColor( );
                 }
                 else
                 {

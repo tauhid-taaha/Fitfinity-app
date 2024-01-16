@@ -48,7 +48,10 @@ namespace fitfinity
 
             for (int i = 0; i < selectedList.Count; i++)
             {
-                Console.WriteLine($"Index: {i + 1}, Food Name: {selectedList[i].Name}");
+                Console.Write($"Index: {i + 1}, Food Name: ");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine( selectedList[i].Name );
+                Console.ResetColor();
             }
         }
 
