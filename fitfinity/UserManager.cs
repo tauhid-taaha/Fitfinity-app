@@ -396,6 +396,8 @@ namespace fitfinity
 
 
                     case "4":
+                        Console.Clear();
+                        DisplayTitle2();
 
                         Console.WriteLine("Choose your activity level: ");
                         Console.WriteLine("1. Inactive: Little to no exercise");
@@ -425,7 +427,9 @@ namespace fitfinity
                                 break;
                         }
                         double calories = Nutrition.CalculateDailyCalories(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age, activityLevel);
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.WriteLine($"Your daily calorie needs are: {calories:F2} calories");
+                        Console.ResetColor();
                         break;
 
 
@@ -641,12 +645,16 @@ namespace fitfinity
                             {
                                 // Calculate daily steps based on the provided information
                                 int totalSteps = Exercise.CalculateStepsPerMile(minutesPerMile, height, gender, milesWalked);
+                                Console.Clear();
+                                DisplayTitle2();
+                                Console.ForegroundColor= ConsoleColor.Cyan;
                                 Console.WriteLine($"Your daily steps: {totalSteps}");
                                 Console.WriteLine("Manual step counting, without the use of sensors, may sometimes lead to inaccuracies in results.");
-
+                               
                                 // Determine activity level based on the calculated daily steps
                                 string ActivityLevel = Exercise.DetermineActivityLevel(totalSteps);
                                 Console.WriteLine($"Your activity level: {ActivityLevel}");
+                                Console.ResetColor();
                             }
                             else
                             {

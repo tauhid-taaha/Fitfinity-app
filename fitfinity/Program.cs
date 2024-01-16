@@ -77,6 +77,7 @@ namespace fitfinity
 
             while (true)
             {
+               
                 Console.WriteLine("Choose an option:");
                 Console.WriteLine("1. Sign Up");
                 Console.WriteLine("2. Log In");
@@ -159,8 +160,9 @@ namespace fitfinity
                             }
                         }
 
-                //Console.WriteLine(" ");
-            }
+          
+        }
+        
         }
     }
     
