@@ -518,8 +518,9 @@ namespace fitfinity
 
 
                     case "7":
-
+                        Console.ForegroundColor= ConsoleColor.Cyan;
                         Console.WriteLine("Choose your activity level: ");
+                        Console.ResetColor();
                         Console.WriteLine("1. Inactive: Little to no exercise");
                         Console.WriteLine("2. Light: Light exercise/sports 1-3 days/week");
                         Console.WriteLine("3. Moderate: Moderate exercise/sports 3-5 days/week");
@@ -530,8 +531,9 @@ namespace fitfinity
                         fitness_recommendation fr = new fitness_recommendation();
 
 
-
+                        
                         Console.WriteLine("Choose your goal:");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.WriteLine("1. Weight Loss");
                         Console.WriteLine("2. Weight Gain");
                         string goalChoice = Console.ReadLine();
@@ -588,7 +590,49 @@ namespace fitfinity
                             double bmi= CalculateBMI(currentUser.Height, currentUser.Weight);
                             string workoutSuggestion = fR.GenerateWorkoutSuggestion(currentUser.ActivityLevel, goalChoice,bmi);
                             string dietSuggestion = fR.GenerateDietSuggestion(goalChoice, Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age));
+                            if(bmi < 18.5 ){
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("WARNING : YOUR BMI IS : ");
+                                Console.ForegroundColor=ConsoleColor.Yellow;
+                                Console.WriteLine(bmi );
+                                Console.ForegroundColor= ConsoleColor.Red;
+                                Console.WriteLine("Which Indicates Underweight.You Should Gain Some Weight or Consult a Doctor");
+                                Console.ResetColor();
+                                    
+                                    
+                                    }
+                            else if(bmi > 23.5 && bmi < 25)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("WARNING : YOUR BMI IS : ");
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine(bmi);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Which Refers To Obesity.Please maintain a healthy Lifestyle");
+                                Console.ResetColor();
 
+
+                            }
+                            else if (bmi>25 && bmi < 30)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("WARNING : YOUR BMI IS : ");
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine(bmi);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Which Refers To OverWeight.Please Maintain a Balanced Diet and Proper Workout Plans to Lose Some Weight");
+                                Console.ResetColor();
+                            }
+                            else if (bmi > 35) {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("WARNING : YOUR BMI IS : ");
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine(bmi);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Which Falls On The Border of Normal Weight and OverWeight.Maintain A Healthy Lifestyle");
+                                Console.ResetColor();
+                            }
+                            Console.ForegroundColor= ConsoleColor.Cyan;
                             Console.WriteLine("\nPersonalized Recommendations:");
                             Console.WriteLine(workoutSuggestion);
                             Console.WriteLine();

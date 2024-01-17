@@ -40,15 +40,15 @@ namespace fitfinity
             // Adjust diet suggestions based on BMR
             if (bmr < 1500)
             {
-                dietSuggestion += "Considering your low BMR, focus on nutrient-dense foods and control portion sizes.";
+                dietSuggestion += "Considering your low BMR, focus on nutrient-dense foods and control portion sizes.\nOpt for Whole Grains Like Quinoa and BrownRice for Sustained Enerzy";
             }
             else if (bmr >= 1500 && bmr < 2000)
             {
-                dietSuggestion += "With a moderate BMR, aim for a balanced diet with a mix of macronutrients.";
+                dietSuggestion += "With a moderate BMR, aim for a balanced diet with a mix of macronutrients\nChoose Whole Grain And Complex Carbohydrades for enerzy.";
             }
             else
             {
-                dietSuggestion += "Given your higher BMR, make sure to consume enough calories to support your energy needs.";
+                dietSuggestion += "Given your higher BMR, make sure to consume enough calories to support your energy needs.\nInclude Lean Protein For Muscle Maintenance and Repair.\nConsider Incorporating Snacks Between Meals.\nInclude Healthy Fats like Avacado,Nuts,Seeds etc ";
             }
 
             // Add more logic based on the goal
