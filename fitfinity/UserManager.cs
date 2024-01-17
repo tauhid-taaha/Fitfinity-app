@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 
 namespace fitfinity
@@ -253,7 +254,7 @@ namespace fitfinity
                        
                         Dictionary<string, List<int>> mealData = new Dictionary<string, List<int>>();
                         foodload fd = new foodload();
-                        string record_file = @"C:\Users\Tauhid\Downloads\fitfinity_solid\firtfinity_Solid\firtfinity_Solid\bin\Debug\calorietracker.txt";
+                        string record_file = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\calorietracker.txt";
 
                         while (true)
                         { Console.ForegroundColor= ConsoleColor.Cyan;
@@ -439,13 +440,19 @@ namespace fitfinity
 
                         do
                         {
+                            
                             medicalFAQ.DisplayFAQ();
                             Console.Write("\nEnter the number of the question you want to view, type 'back' to go back to the main menu, or 'prev' to go back to the previous questions: ");
                             string input = Console.ReadLine();
 
                             if (input.ToLower() == "back")
                             {
+                                Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("\nGoing back to the main menu.");
+                                Thread.Sleep(3000);
+                                Console.ResetColor();
+                                Console.Clear();
+                                DisplayTitle2();
                                 break; // Exit the do-while loop to return to the main menu
                             }
                             else if (input.ToLower() == "prev" && !string.IsNullOrEmpty(selectedQuestion))
@@ -455,6 +462,8 @@ namespace fitfinity
                             }
                             else if (int.TryParse(input, out int questionNumber))
                             {
+                                Console.Clear();
+                                DisplayTitle2();
                                 medicalFAQ.AnswerQuestion(questionNumber.ToString());
                                 selectedQuestion = questionNumber.ToString();
                             }
@@ -541,23 +550,27 @@ namespace fitfinity
                             // Check if the target weight is not less than current weight for weight loss
                             if (selectedGoal == 1 && targetWeight >= currentWeight)
                             {
+                                Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("Sorry, it's not healthy for you to lose weight as you are already underweight.");
+                                Console.ResetColor();
                                 break;
                             }
 
                             // Check if the target weight is not greater than current weight for weight gain
                             if (selectedGoal == 2 && targetWeight <= currentWeight)
-                            {
+                            {   Console.ForegroundColor= ConsoleColor.Red;
                                 Console.WriteLine("Sorry, it's not healthy for you to gain weight as you are already overweight.");
+                                Console.ResetColor();
                                 break;
                             }
-
+                            Console.Clear();
+                            DisplayTitle2();
                             double weightChangePerWeek = Math.Abs((currentWeight - targetWeight) / (goalDurationDays / 7.0));
                             double dailyCaloricDeficit = weightChangePerWeek * 7700 / 7.0;
-
+                            Console.ForegroundColor=ConsoleColor.Red;
                             Console.WriteLine($"Your target weight: {targetWeight:F2} kg");
                             Console.WriteLine($"To achieve your goal in {goalDurationDays} days:");
-
+                            Console.ForegroundColor=ConsoleColor.Yellow;
                             if (selectedGoal == 1)
                             {
                                 Console.WriteLine($"You need to lose approximately {weightChangePerWeek:F2} kg per week.");
@@ -566,17 +579,21 @@ namespace fitfinity
                             {
                                 Console.WriteLine($"You need to gain approximately {weightChangePerWeek:F2} kg per week.");
                             }
-
+                           ;
                             Console.WriteLine($"Maintain a daily caloric deficit of {dailyCaloricDeficit:F2} calories.");
-
+                            Console.ResetColor();
+                            Console.WriteLine();
                             // Suggested diet and exercise plans (based on BMR and goal)
                             fitness_recommendation fR = new fitness_recommendation();
-                            string workoutSuggestion = fR.GenerateWorkoutSuggestion(currentUser.ActivityLevel, goalChoice, CalculateBMI(currentUser.Height, currentUser.Weight));
+                            double bmi= CalculateBMI(currentUser.Height, currentUser.Weight);
+                            string workoutSuggestion = fR.GenerateWorkoutSuggestion(currentUser.ActivityLevel, goalChoice,bmi);
                             string dietSuggestion = fR.GenerateDietSuggestion(goalChoice, Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age));
 
                             Console.WriteLine("\nPersonalized Recommendations:");
                             Console.WriteLine(workoutSuggestion);
+                            Console.WriteLine();
                             Console.WriteLine(dietSuggestion);
+                            Console.ResetColor();
                         }
                         else
                         {
@@ -586,13 +603,19 @@ namespace fitfinity
 
 
                     case "8":
-
+                        Console.ForegroundColor = ConsoleColor.Red;
                         rc.PrintAllRecords(currentUser.Username);
+                        Console.ResetColor();
                         break;
                     case "6":
-                        Console.WriteLine("Calculate Ideal Weight:");
+                        Console.Clear();
+                        DisplayTitle2();
+
+                        Console.WriteLine("Calculating Ideal Weight:");
                         double idealWeight = Nutrition.CalculateIdealWeight(currentUser.Gender, currentUser.Height);
+                        Console.ForegroundColor= ConsoleColor.DarkYellow;
                         Console.WriteLine($"Your Ideal Weight is: {idealWeight:F2} kg");
+                        Console.ResetColor();
                         break;
 
 
@@ -654,7 +677,7 @@ namespace fitfinity
 
                     case "9":
 
-                        string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\calories2.txt";
+                        string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\calories2.txt";
                        
                         Dictionary<string, Foods> foodDatabase = ReadFoodDatabase(filePath);
 
@@ -677,11 +700,11 @@ namespace fitfinity
                                         Console.ForegroundColor = ConsoleColor.Cyan;
                                         Console.WriteLine("\nYour Random Meal Plan:");
                                         foreach (var entry in mealPlan)
-                                        {
+                                        {   Console.ForegroundColor= ConsoleColor.Red;
                                             Console.WriteLine($"\n{entry.Key.ToUpper()}:");
-
+                                            Console.ResetColor();
                                             foreach (var foodItem in entry.Value)
-                                            {
+                                            {Console.ForegroundColor= ConsoleColor.Yellow;
                                                 Console.WriteLine($"{foodItem.Name}, {foodItem.Weight} grams, {foodItem.Calorie} calories, {foodItem.FoodType}");
                                             }
                                         }
@@ -775,7 +798,7 @@ namespace fitfinity
 
         private void RecordBMI(string date, double newBMI)
         {
-            string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\record.txt";
+            string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\record.txt";
 
             // Record the date and new BMI in a file
             using (StreamWriter writer = File.AppendText(filePath))
@@ -895,7 +918,7 @@ namespace fitfinity
         private static string ReadUserInfo(string username)
         {
             // Specify the path to the user.txt file
-            string filePath = @"C:\Users\Tauhid\Downloads\SPL\SPL\fitfinity\bin\Debug\users.txt";
+            string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\users.txt";
 
             try
             {
@@ -974,7 +997,7 @@ namespace fitfinity
                 && Math.Abs(proteinWeight / vegetableWeight - proteinRatio / vegetableRatio) < 0.1;
         }
 
-        string calorie_file= @"C:\Users\Tauhid\Downloads\fitfinity_solid\firtfinity_Solid\firtfinity_Solid\bin\Debug\calorietracker.txt";
+        string calorie_file= @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\calorietracker.txt";
        public void LoadDailyCaloriesData(string username)
         {
             if (File.Exists(calorie_file))
