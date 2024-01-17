@@ -349,12 +349,13 @@ namespace fitfinity
 
                                 case "5": // Calculate Overall Daily Calories
                                     double overallCalories = mealData.Values.SelectMany(list => list).Sum();
-                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
                                     Console.Write($"Overall Daily Calories: ");
                                     Console.ForegroundColor=ConsoleColor.Red;
                                     Console.WriteLine(overallCalories );
 
-                                    SaveDailyCaloriesData(currentUser.Username, DateTime.Now.ToString("yyyy-MM-dd"),mealData);
+                                    SaveDailyCaloriesData(currentUser.Username, DateTime.Now.ToString("yyyy-MM-dd"),(int)overallCalories);
+                                    Console.WriteLine();
                                     Console.ResetColor();
                                     break;
 
@@ -388,42 +389,78 @@ namespace fitfinity
                                     Console.WriteLine("Invalid input. Please enter a valid number of days.");
                                 }
                             }
-                             void LoadPastDailyCalories(string username, int days)
+                            
+
+
+
+                            void SaveDailyCaloriesData(string username, string date, int overallCalories)
+                            {
+                                using (StreamWriter writer = new StreamWriter(record_file, append: true))
+                                {
+                                    writer.WriteLine($"{username}, {date}, Overall Daily Calories: {overallCalories}");
+                                }
+                            }
+
+
+                            void LoadPastDailyCalories(string username, int days)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"Viewing daily calories for the past {days} days for {username}:");
+                                Console.WriteLine($"Viewing daily overall calories for the past {days} days for {username}:");
                                 Console.ResetColor();
 
                                 if (userData.ContainsKey(username))
                                 {
                                     Dictionary<string, List<int>> userMealData = userData[username];
 
-                                    // Read data from the file
-                                    List<string> lines = File.ReadLines(record_file).Reverse().Take(days).ToList();
+                                    List<string> lines = File.ReadLines(record_file).Reverse().ToList();
 
+                                    int count = 0;
                                     foreach (string line in lines)
-                                    {   Console.ForegroundColor=ConsoleColor.Yellow;
-                                        Console.WriteLine(line);
+                                    {
+                                        string[] parts = line.Split(',');
+
+                                        if (parts.Length >= 3)
+                                        {
+                                            string storedUsername = parts[0].Trim();
+                                            string storedDate = parts[1].Trim();
+
+                                            if (storedUsername == username)
+                                            {
+                                                // Assume the overall calories are stored after "Overall Daily Calories:"
+                                                int startIndex = line.IndexOf("Overall Daily Calories:") + "Overall Daily Calories:".Length;
+                                                string overallCaloriesString = line.Substring(startIndex).Trim();
+
+                                                if (int.TryParse(overallCaloriesString, out int overallCalories))
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                                    Console.WriteLine($"{storedUsername}, {storedDate}, Overall Daily Calories: {overallCalories}");
+                                                    Console.ResetColor();
+
+                                                    count++;
+
+                                                    if (count >= days)
+                                                    {
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                    Console.ResetColor();
+
+                                    if (count == 0)
+                                    {
+                                        Console.WriteLine($"No records found for user {username} in the past {days} days.");
+                                    }
                                 }
                                 else
                                 {
                                     Console.WriteLine($"User {username} not found.");
                                 }
                             }
-                          
-                            void SaveDailyCaloriesData(string username, string date, Dictionary<string, List<int>> dailyCalories)
-                            {
-                                using (StreamWriter writer = new StreamWriter(record_file, append: true))
-                                {
-                                    string calorieDataString = string.Join(";", dailyCalories.Select(kvp => $"{kvp.Key}:{string.Join(",", kvp.Value)}"));
-                                    writer.WriteLine($"{username}, {date}, {calorieDataString}");
-                                }
-                            }
-                          
 
-                           
+
+
+
 
                         }
                     case "11":
