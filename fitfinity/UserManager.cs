@@ -349,12 +349,13 @@ namespace fitfinity
 
                                 case "5": // Calculate Overall Daily Calories
                                     double overallCalories = mealData.Values.SelectMany(list => list).Sum();
-                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
                                     Console.Write($"Overall Daily Calories: ");
                                     Console.ForegroundColor=ConsoleColor.Red;
                                     Console.WriteLine(overallCalories );
 
-                                    SaveDailyCaloriesData(currentUser.Username, DateTime.Now.ToString("yyyy-MM-dd"),mealData);
+                                    SaveDailyCaloriesData(currentUser.Username, DateTime.Now.ToString("yyyy-MM-dd"),(int)overallCalories);
+                                    Console.WriteLine();
                                     Console.ResetColor();
                                     break;
 
@@ -388,42 +389,78 @@ namespace fitfinity
                                     Console.WriteLine("Invalid input. Please enter a valid number of days.");
                                 }
                             }
-                             void LoadPastDailyCalories(string username, int days)
+                            
+
+
+
+                            void SaveDailyCaloriesData(string username, string date, int overallCalories)
+                            {
+                                using (StreamWriter writer = new StreamWriter(record_file, append: true))
+                                {
+                                    writer.WriteLine($"{username}, {date}, Overall Daily Calories: {overallCalories}");
+                                }
+                            }
+
+
+                            void LoadPastDailyCalories(string username, int days)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"Viewing daily calories for the past {days} days for {username}:");
+                                Console.WriteLine($"Viewing daily overall calories for the past {days} days for {username}:");
                                 Console.ResetColor();
 
                                 if (userData.ContainsKey(username))
                                 {
                                     Dictionary<string, List<int>> userMealData = userData[username];
 
-                                    // Read data from the file
-                                    List<string> lines = File.ReadLines(record_file).Reverse().Take(days).ToList();
+                                    List<string> lines = File.ReadLines(record_file).Reverse().ToList();
 
+                                    int count = 0;
                                     foreach (string line in lines)
-                                    {   Console.ForegroundColor=ConsoleColor.Yellow;
-                                        Console.WriteLine(line);
+                                    {
+                                        string[] parts = line.Split(',');
+
+                                        if (parts.Length >= 3)
+                                        {
+                                            string storedUsername = parts[0].Trim();
+                                            string storedDate = parts[1].Trim();
+
+                                            if (storedUsername == username)
+                                            {
+                                                // Assume the overall calories are stored after "Overall Daily Calories:"
+                                                int startIndex = line.IndexOf("Overall Daily Calories:") + "Overall Daily Calories:".Length;
+                                                string overallCaloriesString = line.Substring(startIndex).Trim();
+
+                                                if (int.TryParse(overallCaloriesString, out int overallCalories))
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                                    Console.WriteLine($"{storedUsername}, {storedDate}, Overall Daily Calories: {overallCalories}");
+                                                    Console.ResetColor();
+
+                                                    count++;
+
+                                                    if (count >= days)
+                                                    {
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                    Console.ResetColor();
+
+                                    if (count == 0)
+                                    {
+                                        Console.WriteLine($"No records found for user {username} in the past {days} days.");
+                                    }
                                 }
                                 else
                                 {
                                     Console.WriteLine($"User {username} not found.");
                                 }
                             }
-                          
-                            void SaveDailyCaloriesData(string username, string date, Dictionary<string, List<int>> dailyCalories)
-                            {
-                                using (StreamWriter writer = new StreamWriter(record_file, append: true))
-                                {
-                                    string calorieDataString = string.Join(";", dailyCalories.Select(kvp => $"{kvp.Key}:{string.Join(",", kvp.Value)}"));
-                                    writer.WriteLine($"{username}, {date}, {calorieDataString}");
-                                }
-                            }
-                          
 
-                           
+
+
+
 
                         }
                     case "11":
@@ -518,8 +555,9 @@ namespace fitfinity
 
 
                     case "7":
-
+                        Console.ForegroundColor= ConsoleColor.Cyan;
                         Console.WriteLine("Choose your activity level: ");
+                        Console.ResetColor();
                         Console.WriteLine("1. Inactive: Little to no exercise");
                         Console.WriteLine("2. Light: Light exercise/sports 1-3 days/week");
                         Console.WriteLine("3. Moderate: Moderate exercise/sports 3-5 days/week");
@@ -530,8 +568,9 @@ namespace fitfinity
                         fitness_recommendation fr = new fitness_recommendation();
 
 
-
+                        
                         Console.WriteLine("Choose your goal:");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.WriteLine("1. Weight Loss");
                         Console.WriteLine("2. Weight Gain");
                         string goalChoice = Console.ReadLine();
@@ -588,7 +627,49 @@ namespace fitfinity
                             double bmi= CalculateBMI(currentUser.Height, currentUser.Weight);
                             string workoutSuggestion = fR.GenerateWorkoutSuggestion(currentUser.ActivityLevel, goalChoice,bmi);
                             string dietSuggestion = fR.GenerateDietSuggestion(goalChoice, Nutrition.CalculateBmr(currentUser.Gender, currentUser.Weight, currentUser.Height, currentUser.age));
+                            if(bmi < 18.5 ){
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("WARNING : YOUR BMI IS : ");
+                                Console.ForegroundColor=ConsoleColor.Yellow;
+                                Console.WriteLine(bmi );
+                                Console.ForegroundColor= ConsoleColor.Red;
+                                Console.WriteLine("Which Indicates Underweight.You Should Gain Some Weight or Consult a Doctor");
+                                Console.ResetColor();
+                                    
+                                    
+                                    }
+                            else if(bmi > 23.5 && bmi < 25)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("WARNING : YOUR BMI IS : ");
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine(bmi);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Which Refers To Obesity.Please maintain a healthy Lifestyle");
+                                Console.ResetColor();
 
+
+                            }
+                            else if (bmi>25 && bmi < 30)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("WARNING : YOUR BMI IS : ");
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine(bmi);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Which Refers To OverWeight.Please Maintain a Balanced Diet and Proper Workout Plans to Lose Some Weight");
+                                Console.ResetColor();
+                            }
+                            else if (bmi > 35) {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write("WARNING : YOUR BMI IS : ");
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine(bmi);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Which Falls On The Border of Normal Weight and OverWeight.Maintain A Healthy Lifestyle");
+                                Console.ResetColor();
+                            }
+                            Console.ForegroundColor= ConsoleColor.Cyan;
                             Console.WriteLine("\nPersonalized Recommendations:");
                             Console.WriteLine(workoutSuggestion);
                             Console.WriteLine();

@@ -44,7 +44,7 @@ namespace Fitfinity
                     switch (fitnessLevel)
                     { 
                         case 1:
-                            exercises = new string[] { "Jumping Jacks", "Bodyweight Squats", "Push-ups" };
+                            exercises = new string[] { "Jumping Jacks", "Bodyweight Squats", "Lunges" };
                             break;
                         case 2:
                             exercises = new string[] { "Plank with Shoulder Taps", "Kettlebell Swings", "Jump Lunges" };
