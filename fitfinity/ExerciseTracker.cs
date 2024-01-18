@@ -72,14 +72,15 @@ namespace Fitfinity
                         Console.Write("Enter the duration of your workout (1 to 10 minutes): ");
                         if (int.TryParse(Console.ReadLine(), out int workoutDuration) && workoutDuration >= 1 && workoutDuration <= 10)
                         {
-                            Console.Write($"Enter the number of {exercises[selectedExercise - 1]} repetitions during the entire workout: ");
-                            if (int.TryParse(Console.ReadLine(), out int exerciseRepetitions) && exerciseRepetitions >= 0)
+                            //Console.Write($"Enter the number of {exercises[selectedExercise - 1]} repetitions during the entire workout: ");
+                           // if (int.TryParse(Console.ReadLine(), out int exerciseRepetitions) && exerciseRepetitions >= 0)
                             {
                                 Console.WriteLine($"\nGet ready to begin your workout in 3... 2... 1... Go!");
 
                                 // Simulate a virtual timer countdown
                                 for (int seconds = workoutDuration * 60; seconds > 0; seconds--)
-                                {   Console.ForegroundColor= ConsoleColor.Red;
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
 
                                     Console.WriteLine($"[Time Remaining]: {TimeSpan.FromSeconds(seconds)}");
                                     if (Console.KeyAvailable)
@@ -100,17 +101,18 @@ namespace Fitfinity
                                 {
                                     // Calculate calories burned based on MET (Metabolic Equivalent of Task) values
                                     double metValue = CalculateMetValue(exercises[selectedExercise - 1]);
-                                    double caloriesBurned = CalculateCaloriesBurned(exerciseRepetitions, workoutDuration, metValue, Weight);
-                                    Console.ForegroundColor=(ConsoleColor.Cyan);
+                                    double caloriesBurned = CalculateCaloriesBurned(workoutDuration, metValue, Weight);
+                                    Console.ForegroundColor = (ConsoleColor.Cyan);
                                     Console.WriteLine($"\n[Workout completed]");
-                                    Console.WriteLine($"Calories burned for {exerciseRepetitions} repetition {exercises[selectedExercise - 1]}: {caloriesBurned:F2} calories");
+                                    Console.WriteLine($"Calories burned for  {exercises[selectedExercise - 1]}: {caloriesBurned:F2} calories");
                                     Console.ResetColor();
                                 }
                             }
-                            else
-                            {
-                                Console.WriteLine("Invalid number of repetitions. Please enter a non-negative integer.");
-                            }
+                      
+                       // else
+                       {
+                            //Console.WriteLine("Invalid number of repetitions. Please enter a non-negative integer.");
+                        }
                         }
                         else
                         {
@@ -196,7 +198,7 @@ namespace Fitfinity
             }
         }
 
-         double CalculateCaloriesBurned(int repetitions, int durationMinutes, double metValue,double Weight)
+         double CalculateCaloriesBurned( int durationMinutes, double metValue,double Weight)
         {
             // Total calories burned formula: Calories = (MET * weight in kg * 3.5) / 200 * duration in minutes
             // For simplicity, assuming a constant weight of 70 kg

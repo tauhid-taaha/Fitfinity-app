@@ -13,6 +13,8 @@ namespace fitfinity
         string filePath = @"C:\Users\DR.MEHBUB UL KADIR\Documents\spl\fitfinity\bin\Debug\record.txt";
         public List<loadrecord> recordlist = new List<loadrecord>();
 
+        public string calorie_file { get; private set; }
+
         public record()
         {
             LoadDataFromFile();
@@ -20,10 +22,11 @@ namespace fitfinity
         public void LoadDataFromFile()
         {
             if (
-               File.Exists( filePath ) ) { 
-            using (StreamReader reader = new StreamReader(filePath))
+               File.Exists(filePath))
             {
-                string line;
+                using (StreamReader reader = new StreamReader(filePath))
+                {
+                    string line;
                     while ((line = reader.ReadLine()) != null)
                     {
                         // Split the line of date and bmi using a comma
@@ -45,7 +48,7 @@ namespace fitfinity
 
                 }
             }
-           
+
         }
 
         public void PrintAllRecords(string userName)
@@ -63,21 +66,24 @@ namespace fitfinity
             }
 
         }
-       public void printname (string userName) { Console.WriteLine(userName); }
-       public void RecordBMI(string username,double newBMI)
+        public void printname(string userName) { Console.WriteLine(userName); }
+        public void RecordBMI(string username, double newBMI)
         {
-            // Automatically record the date and new BMI in a file
-            if (username != null)
+            if (File.Exists(calorie_file))
             {
-                // Automatically record the username, date, and new BMI in the file
-                using (StreamWriter writer = File.AppendText(filePath))
+                // Automatically record the date and new BMI in a file
+                if (username != null)
                 {
-                    writer.WriteLine($"{username},{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},{newBMI:F2}");
+                    // Automatically record the username, date, and new BMI in the file
+                    using (StreamWriter writer = File.AppendText(filePath))
+                    {
+                        writer.WriteLine($"{username},{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")},{newBMI:F2}");
+                    }
                 }
             }
         }
-    }
-  
 
+
+    }
 }
 
